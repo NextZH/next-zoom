@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const numberArr = '1234567890'.split('');
+    const letterArr = 'qwertyuiopasdfghjklzxcvbnm'.toUpperCase().split('');
+    var cars = [];//总共的车
+    const myCars = [];//选中的车
+    for (let i = 0; i < 5; i++) {
+      const nums = [1, 2, 3].map(e => numberArr[parseInt(Math.random() * 10)]);
+      const letters = [1, 2].map(e => letterArr[parseInt(Math.random() * 26)]);
+      cars.push(i + 1 + '-川A ' + nums[0] + letters[0] + nums[1] + letters[1] + nums[2]);
+    }
+    start()
+    function start() {
+      const select = prompt('1.开始选号 2.查看我的车牌 3.删除我的车牌 4.退出');
+      switch (select) {
+        case '1':
+          selectCar();
+          break;
+        case '2':
+          viewCar();
+          break;
+        case '3':
+          delCar();
+          break;
+        case '4':
+          return;
+        default:
+          alert('选项错误请重新选择');
+          start();
+          break;
+      }
+    }
+    //1.开始选号
+    function selectCar() {
+      const num = prompt(`${cars.join('\r')}`);
+      if (myCars.includes(cars[num - 1])) {
+        alert('该车牌号已存在');
+        selectCar();
+      } else {
+        myCars.push(cars[num - 1]);
+        start();
+      }
+
+    }
+    //2.查看我的车牌
+    function viewCar() {
+      alert(`${myCars.join('\r')}`);
+      start();
+    }
+    //3.删除我的车牌
+    function delCar(params) {
+      const num = prompt('请输入要删除的序号');
+      if (num <= myCars.length && num > 0) {
+        myCars.splice(num - 1, 1);
+        start();
+      } else {
+        alert('该序号不存在');
+        delCar();
+      }
+    }
+  </script>
+</body>
+
+</html>

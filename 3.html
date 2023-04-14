@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  
+  <script>
+    // 需要构造全局数据
+    let emps = [
+      { id: 1, name: "xiaowang", age: 23, xueli: ["本科"], gender: 1, message: "性格开朗", cardType: "身份证", statues: 1 },
+      { id: 2, name: "xiaofei", age: 24, xueli: ["专科", "本科"], gender: 0, message: "性格开朗", cardType: "身份证", statues: 0 },
+      { id: 3, name: "xiaozhang", age: 25, xueli: ["本科"], gender: 1, message: "性格开朗", cardType: "身份证", statues: 1 }
+    ]
+    let tbody = document.querySelector(".mytable tbody")
+    let btns = document.querySelectorAll(".filterData button")
+    // let delBtns=document.querySelectorAll("tbody tr td .del")
+    let changeBtns = document.querySelectorAll("tbody tr td .change")
+    let modifyBtns = document.querySelectorAll("tbody tr td .modify")
+
+    //方法2（教师版
+    function main() {
+      render(emps);
+      btns.forEach(element => {
+        let className = element.className
+        switch (className) {
+          case "all":
+            element.onclick = function () { render(emps); }
+            break;
+          case "zaizhi":
+            let arr1 = emps.filter(value => value.statues == 1)
+            element.onclick = function () { render(arr1); }
+            break;
+          case "lizhi":
+            let arr2 = emps.filter(value => value.statues == 0)
+            element.onclick = function () { render(arr2); }
+            break;
+        }
+      })
+      del()
+    }
+    main()
+    /**
+    * 渲染
+    */
+    function render(array) {
+      tbody.innerHTML = ""
+      array.forEach(obj => {
+        let tr = document.createElement("tr")
+        tr.innerHTML = `   <td>${obj.id}</td>
+        <td>${obj.name}</td>
+        <td>${obj.gender == 0 ? "女" : "男"}</td>
+        <td>${obj.age}</td>
+        <td>${obj.cardType}</td>
+        <td>${obj.xueli.join("-")}</td>
+        <td>${obj.message}</td>
+        <td>${obj.statues == 0 ? "离职" : "在职"}</td>
+        <td>
+            <button class="del">删除</button>
+            <button class="modify">修改</button>
+            <button class="change">切换</button>
+        </td>`
+        tbody.appendChild(tr)
+      })
+      del()
+    }
+    function del() {
+      let delBtns = document.querySelectorAll("tbody tr td .del")
+      delBtns.forEach((element, index) => {
+        element.onclick = function () {
+          emps.splice(index, 1)
+          render(emps)
+        }
+      })
+    }
+  </script>
+</body>
+
+</html>
