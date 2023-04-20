@@ -35,7 +35,7 @@
                     red: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'red' : false,
                     balck: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'black' : false,
                     hasChess: item.hasChess && !(item.moveIn && item.movable),
-                    pickupHasChess: pickUp&&pickUpChess.id==item.chessInfo.id && item.hasChess && !(item.moveIn && item.movable),
+                    pickupHasChess: pickUp && pickUpChess.id == item.chessInfo.id && item.hasChess && !(item.moveIn && item.movable),
                     nothasChess: pickUp && item.movable && item.moveIn,
                   }" v-for="item in chesses" :key="item.id" @click="drop(item)" @mouseenter="mouseenter(item)"
                     @mouseleave="mouseleave(item)">
@@ -138,7 +138,7 @@ const repentChesses: {
     list: chessesItem[],
     max: number,
   },
-  [porpName:string]:{
+  [porpName: string]: {
     list: chessesItem[],
     max: number,
   },
@@ -160,7 +160,7 @@ const repentMarks = reactive({
   10: '10',
 })
 //空棋
-const blankChess:chessItem = reactive({
+const blankChess: chessItem = reactive({
   name: null,
   id: null,
   xNum: null,
@@ -448,8 +448,8 @@ const init = () => {
         hasChess: false,
         moveIn: false,
         movable: false,
-        chessInfo: {...blankChess},
-        showInfo: {...blankChess},
+        chessInfo: { ...blankChess },
+        showInfo: { ...blankChess },
       })
 
     }
@@ -493,9 +493,9 @@ watch(blackChess[4], (newValue) => {
 
 const pickUp = ref(false);
 //被举起的棋子
-let pickUpChess: chessItem = reactive({...blankChess});
+let pickUpChess: chessItem = reactive({ ...blankChess });
 //被挡住的棋子
-let blockChess: chessItem = reactive({...blankChess});
+let blockChess: chessItem = reactive({ ...blankChess });
 const drop = (item: chessesItem) => {
   if (!gaming.value) return;
   if (item.chessInfo == pickUpChess) {
@@ -526,19 +526,19 @@ const drop = (item: chessesItem) => {
       if (e.hasChess && e.chessInfo == pickUpChess) {
         const arr = repentChesses[e.chessInfo.type].list;
         const max = repentChesses[e.chessInfo.type].max;
-        arr.push({...e,chessInfo:{...e.chessInfo},showInfo:{...e.showInfo}});
+        arr.push({ ...e, chessInfo: { ...e.chessInfo }, showInfo: { ...e.showInfo } });
         if (arr.length > max) {
           arr.shift();
         }
         e.hasChess = false;
-        e.chessInfo = {...blankChess}
+        e.chessInfo = { ...blankChess }
       }
     })
     item.hasChess = true;
     item.chessInfo = pickUpChess;
-    pickUpChess = {...blankChess}
-    item.showInfo = {...blankChess};
-    blockChess = {...blankChess};
+    pickUpChess = { ...blankChess }
+    item.showInfo = { ...blankChess };
+    blockChess = { ...blankChess };
     item.moveIn = false;
     chessColor.value = !chessColor.value;
   }
@@ -824,7 +824,7 @@ const mouseleave = (item: chessesItem) => {
   if (pickUp.value && item.movable) {
     // console.log(111);
     item.showInfo = blockChess;
-    blockChess = {...blankChess};
+    blockChess = { ...blankChess };
     item.moveIn = false;
   }
 }
@@ -835,19 +835,19 @@ const mouseleave = (item: chessesItem) => {
 const repenting = () => {
   if (repentChesses[chessColor.value ? 'black' : 'red'].max) {
     const arr = repentChesses[chessColor.value ? 'black' : 'red'].list;
-    const last =arr[arr.length - 1];
-    let needRepentChess:chessItem;
-    chesses.forEach((e:chessesItem)=>{
-      if (e.hasChess&&e.chessInfo.id==last.chessInfo.id) {
-        needRepentChess=e.chessInfo;
-        e.hasChess=false;
-        e.chessInfo={...blankChess};
+    const last = arr[arr.length - 1];
+    let needRepentChess: chessItem;
+    chesses.forEach((e: chessesItem) => {
+      if (e.hasChess && e.chessInfo.id == last.chessInfo.id) {
+        needRepentChess = e.chessInfo;
+        e.hasChess = false;
+        e.chessInfo = { ...blankChess };
       }
     })
-    chesses.forEach((e:chessesItem)=>{
-      if (e.id==last.id) {
-        e.hasChess=true;
-        e.chessInfo=needRepentChess;
+    chesses.forEach((e: chessesItem) => {
+      if (e.id == last.id) {
+        e.hasChess = true;
+        e.chessInfo = needRepentChess;
       }
     })
     arr.pop();
@@ -882,36 +882,30 @@ const repenting = () => {
 }
 
 $bold: 60px;
-
-.rowNum {
+@mixin num($value){
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: $bold;
+  #{$value}: $bold;
   // background-color: pink;
-  padding: 0 30px;
 
   span {
     display: flex;
-    width: $bold;
     justify-content: center;
     align-items: center;
   }
 }
+.rowNum {
+  padding: 0 30px;
+
+  span {
+    width: $bold;
+  }
+  @include num(height)
+}
 
 .colNum {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: column;
-  width: $bold;
-
-  // background-color: pink;
-  span {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  @include num(width)
 }
 
 #bigbox {
@@ -955,162 +949,78 @@ $bold: 60px;
       }
     }
 
-    &:nth-child(9),
-    &:nth-child(15),
-    &:nth-child(18),
-    &:nth-child(20),
-    &:nth-child(22),
-    &:nth-child(24),
-    &:nth-child(35),
-    &:nth-child(37),
-    &:nth-child(39),
-    &:nth-child(41),
-    &:nth-child(42),
-    &:nth-child(48) {
-      box-sizing: border-box;
-      display: flex;
-      flex-wrap: wrap;
-      padding: 5px;
+    $list1: 9, 15, 18, 20, 22, 24, 35, 37, 39, 41, 42, 48;
+    $list2: 10, 16, 17, 19, 21, 23, 34, 36, 38, 40, 43, 49;
+    $list3: 17, 23, 26, 28, 30, 32, 43, 45, 47, 49, 50, 56;
+    $list4: 18, 24, 25, 27, 29, 31, 42, 44, 46, 48, 51, 57;
+    $allList: (
+      (arr:$list1, i:16, dir1:bottom, dir2:right),
+      (arr:$list2, i:13, dir1:bottom, dir2:left),
+      (arr:$list3, i:4, dir1:top, dir2:right),
+      (arr:$list4, i:1, dir1:top, dir2:left),
+    );
 
-      .innerBox {
-        width: 25%;
-        height: 25%;
-        // background-color: pink;
+  @each $obj in $allList {
+    @each $index in map-get($obj, arr) {
+      &:nth-child(#{$index}) {
         box-sizing: border-box;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 5px;
 
-        &:nth-child(16) {
-          border-bottom: 2px solid #000000;
-          border-right: 2px solid #000000;
+        .innerBox {
+          width: 25%;
+          height: 25%;
+          // background-color: pink;
+          box-sizing: border-box;
+
+          &:nth-child(#{map-get($obj,i)}) {
+            border-#{map-get($obj,dir1)}: 2px solid #000000;
+            border-#{map-get($obj,dir2)}: 2px solid #000000;
+          }
         }
-      }
-    }
-
-    &:nth-child(10),
-    &:nth-child(16),
-    &:nth-child(17),
-    &:nth-child(19),
-    &:nth-child(21),
-    &:nth-child(23),
-    &:nth-child(34),
-    &:nth-child(36),
-    &:nth-child(38),
-    &:nth-child(40),
-    &:nth-child(43),
-    &:nth-child(49) {
-      box-sizing: border-box;
-      display: flex;
-      flex-wrap: wrap;
-      padding: 5px;
-
-      .innerBox {
-        width: 25%;
-        height: 25%;
-        // background-color: pink;
-        box-sizing: border-box;
-
-        &:nth-child(13) {
-          border-bottom: 2px solid #000000;
-          border-left: 2px solid #000000;
-        }
-      }
-    }
-
-    &:nth-child(17),
-    &:nth-child(23),
-    &:nth-child(26),
-    &:nth-child(28),
-    &:nth-child(30),
-    &:nth-child(32),
-    &:nth-child(43),
-    &:nth-child(45),
-    &:nth-child(47),
-    &:nth-child(49),
-    &:nth-child(50),
-    &:nth-child(56) {
-      box-sizing: border-box;
-      display: flex;
-      flex-wrap: wrap;
-      padding: 5px;
-
-      .innerBox {
-        width: 25%;
-        height: 25%;
-        // background-color: pink;
-        box-sizing: border-box;
-
-        &:nth-child(4) {
-          border-top: 2px solid #000000;
-          border-right: 2px solid #000000;
-        }
-      }
-    }
-
-    &:nth-child(18),
-    &:nth-child(24),
-    &:nth-child(25),
-    &:nth-child(27),
-    &:nth-child(29),
-    &:nth-child(31),
-    &:nth-child(42),
-    &:nth-child(44),
-    &:nth-child(46),
-    &:nth-child(48),
-    &:nth-child(51),
-    &:nth-child(57) {
-      box-sizing: border-box;
-      display: flex;
-      flex-wrap: wrap;
-      padding: 5px;
-
-      .innerBox {
-        width: 25%;
-        height: 25%;
-        // background-color: pink;
-        box-sizing: border-box;
-
-        &:nth-child(1) {
-          border-top: 2px solid #000000;
-          border-left: 2px solid #000000;
-        }
-      }
-    }
-
-    &:nth-child(4),
-    &:nth-child(13),
-    &:nth-child(53),
-    &:nth-child(62) {
-      box-sizing: border-box;
-      overflow: hidden;
-
-      .innerBox {
-        width: 150%;
-        height: 150%;
-        // background-color: pink;
-        box-sizing: border-box;
-        transform: rotateZ(45deg) translateY(-3px);
-        transform-origin: 0px 0px;
-        border-top: 6px solid #000000;
-      }
-    }
-
-    &:nth-child(5),
-    &:nth-child(12),
-    &:nth-child(54),
-    &:nth-child(61) {
-      box-sizing: border-box;
-      overflow: hidden;
-
-      .innerBox {
-        width: 150%;
-        height: 150%;
-        // background-color: pink;
-        box-sizing: border-box;
-        transform: rotateZ(-45deg) translate(-20px, -24px);
-        transform-origin: 100% 0px;
-        border-top: 6px solid #000000;
       }
     }
   }
+
+  $list5: 4 13 53 62;
+  $list6: 5 12 54 61;
+
+  @mixin tilt($value) {
+    box-sizing: border-box;
+    overflow: hidden;
+
+    .innerBox {
+      width: 150%;
+      height: 150%;
+      // background-color: pink;
+      box-sizing: border-box;
+      transform-origin: $value 0px;
+      border-top: 6px solid #000000;
+    }
+  }
+
+  @each $i in $list5 {
+    &:nth-child(#{$i}) {
+      .innerBox {
+        transform: rotateZ(45deg) translateY(-3px);
+      }
+
+      @include tilt(0px)
+    }
+
+  }
+  @each $i in $list6 {
+    &:nth-child(#{$i}) {
+      .innerBox {
+        transform: rotateZ(-45deg) translate(-20px, -24px);
+      }
+
+      @include tilt(100%)
+    }
+
+  }
+}
 }
 
 .container2 {
@@ -1196,5 +1106,4 @@ $bold: 60px;
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
-}
-</style>
+}</style>
