@@ -39,7 +39,7 @@ import {
 } from '@element-plus/icons-vue'
 
 const props = defineProps(['isCollapse']);
-const defaultPath=ref('/');
+const defaultPath=ref(menu[0].path);
 const created=() =>{
   const path=localStorage.getItem('defaultPath');
   if (path) {
