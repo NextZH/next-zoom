@@ -532,6 +532,7 @@ const leaveHelp = () => {
 </script>
 
 <style lang="scss" scoped>
+@import "../assets/mixins.scss";
 .page {
   // height: 100vh;
   box-sizing: border-box;
@@ -550,9 +551,6 @@ const leaveHelp = () => {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
   .dialog {
     width: 400px;
@@ -596,6 +594,7 @@ const leaveHelp = () => {
       }
     }
   }
+  @include f-c-c();
 }
 
 .top {
@@ -606,9 +605,6 @@ const leaveHelp = () => {
   .left {
     width: 800px;
     flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
     .leftBox {
       border-radius: 10px;
@@ -623,16 +619,15 @@ const leaveHelp = () => {
         top: 0;
         left: 0;
         background-color: rgba(0, 0, 0, 0.4);
-        display: flex;
-        justify-content: center;
-        align-items: center;
         transition: 0.5s;
 
         &:hover {
           background-color: rgba(0, 0, 0, 0.2);
         }
+        @include f-c-c();
       }
     }
+    @include f-c-c();
   }
 
   .right {

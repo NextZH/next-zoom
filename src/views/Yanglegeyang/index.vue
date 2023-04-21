@@ -112,14 +112,12 @@ const clickCard=(item:cardType)=>{
     width: $cardLength;
     height: $cardLength;
     border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     transition: 0.5s;
     &:hover {
       transform: scale(1.2,1.2);
       box-shadow: 0px 0px 5px 1px #333;
     }
+    @include f-c-c;
   }
 }
 </style>

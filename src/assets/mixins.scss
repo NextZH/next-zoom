@@ -3,3 +3,19 @@
   justify-content: center;
   align-items: center;
 }
+@mixin f-sb-c {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin num($value,$bold){
+  #{$value}: $bold;
+  // background-color: pink;
+
+  span {
+    @content;
+    @include f-c-c();
+  }
+  @include f-sb-c();
+}

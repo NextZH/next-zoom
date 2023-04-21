@@ -19,12 +19,12 @@
                 <!-- 棋子 -->
                 <div class="container container2" :style="{ '--lines': lines, }">
                   <div :class="{
-                    item: true,
-                    unActiveBlack: !item.isActive && !item.color && gaming,
-                    activedBlack: item.isActive && !item.color ,
-                    unActiveWhite: !item.isActive && item.color && gaming,
-                    activedWhite: item.isActive && item.color ,
-                  }" v-for="item in chesses" :key="item.id" @click="drop(item)">
+                      item: true,
+                      unActiveBlack: !item.isActive && !item.color && gaming,
+                      activedBlack: item.isActive && !item.color,
+                      unActiveWhite: !item.isActive && item.color && gaming,
+                      activedWhite: item.isActive && item.color,
+                    }" v-for="item in chesses" :key="item.id" @click="drop(item)">
                   </div>
                 </div>
               </div>
@@ -158,7 +158,7 @@ const init = () => {
 
     }
   }
-  chessColor.value=true;
+  chessColor.value = true;
   repentChesses.black.list.splice(0, repentChesses.black.list.length);
   repentChesses.black.max = repentMax.value;
   repentChesses.white.list.splice(0, repentChesses.white.list.length);
@@ -269,6 +269,8 @@ const repenting = () => {
 </script>
 
 <style scoped lang="scss">
+@import "../../assets/mixins.scss";
+
 #page {
   width: 100%;
 }
@@ -288,35 +290,18 @@ const repenting = () => {
   display: flex;
 }
 
+$bold: 30px;
+
 .rowNum {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 30px;
-  // background-color: pink;
   padding: 0 20px;
 
-  span {
-    display: flex;
-    width: 30px;
-    justify-content: center;
-    align-items: center;
+  @include num(height, $bold) {
+    width: $bold;
   }
 }
 
 .colNum {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: column;
-  width: 30px;
-
-  // background-color: pink;
-  span {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  @include num(width, $bold)
 }
 
 #bigbox {

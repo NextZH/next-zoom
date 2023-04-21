@@ -31,13 +31,13 @@
                 <!-- 棋子 -->
                 <div class="container container2" :style="{ '--lines': lines, }">
                   <div :class="{
-                    item: true,
-                    red: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'red' : false,
-                    balck: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'black' : false,
-                    hasChess: item.hasChess && !(item.moveIn && item.movable),
-                    pickupHasChess: pickUp && pickUpChess.id == item.chessInfo.id && item.hasChess && !(item.moveIn && item.movable),
-                    nothasChess: pickUp && item.movable && item.moveIn,
-                  }" v-for="item in chesses" :key="item.id" @click="drop(item)" @mouseenter="mouseenter(item)"
+                      item: true,
+                      red: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'red' : false,
+                      balck: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'black' : false,
+                      hasChess: item.hasChess && !(item.moveIn && item.movable),
+                      pickupHasChess: pickUp && pickUpChess.id == item.chessInfo.id && item.hasChess && !(item.moveIn && item.movable),
+                      nothasChess: pickUp && item.movable && item.moveIn,
+                    }" v-for="item in chesses" :key="item.id" @click="drop(item)" @mouseenter="mouseenter(item)"
                     @mouseleave="mouseleave(item)">
                     <span v-if="item.hasChess || (item.moveIn && item.movable)">
                       <template v-if="item.showInfo.name">
@@ -862,6 +862,8 @@ const repenting = () => {
 </script>
 
 <style scoped lang="scss">
+@import "../../assets/mixins.scss";
+
 #page {
   width: 100%;
 }
@@ -882,30 +884,17 @@ const repenting = () => {
 }
 
 $bold: 60px;
-@mixin num($value){
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  #{$value}: $bold;
-  // background-color: pink;
 
-  span {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
 .rowNum {
   padding: 0 30px;
 
-  span {
+  @include num(height, $bold) {
     width: $bold;
   }
-  @include num(height)
 }
 
 .colNum {
-  @include num(width)
+  @include num(width, $bold)
 }
 
 #bigbox {
@@ -1010,6 +999,7 @@ $bold: 60px;
     }
 
   }
+
   @each $i in $list6 {
     &:nth-child(#{$i}) {
       .innerBox {
@@ -1045,10 +1035,8 @@ $bold: 60px;
     border: 2px solid rgba(0, 0, 0, 0);
     background-color: rgba(0, 0, 0, 0);
     box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-size: 18px;
+    @include f-c-c();
   }
 
   .red {

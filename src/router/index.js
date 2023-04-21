@@ -24,15 +24,16 @@ const addComponent=(menu)=>{
 }
 addComponent(menu);
 
-const redirectIndex = 2;//重定向菜单下标
+// const redirectIndex = 2;//重定向菜单下标
+const redirectPath=localStorage.getItem('defaultPath');//重定向到上一次打开的菜单项
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect:menu[redirectIndex].path,
-      name: menu[redirectIndex].name,
+      // redirect:menu[redirectIndex].path,
+      redirect:redirectPath,
     },
     ...menu
   ]
