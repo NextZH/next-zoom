@@ -3,7 +3,8 @@ import {
   Menu as IconMenu,
   Location,
   Setting,
-  ZoomOut
+  ZoomOut,
+  SwitchFilled,
 } from '@element-plus/icons-vue'
 
 export default [
@@ -17,31 +18,31 @@ export default [
     path: '/saolei',
     name: 'saolei',
     title: '扫雷',
-    icon: ZoomOut,
+    icon: SwitchFilled,
   },
   {
     path: '/shudu',
     name: 'shudu',
     title: '数独',
-    icon: Document,
+    icon: SwitchFilled,
   },
   {
     path: '/wuziqi',
     name: 'wuziqi',
     title: '五子棋',
-    icon: Location,
+    icon: SwitchFilled,
   },
   {
     path: '/xiangqi',
     name: 'xiangqi',
     title: '象棋',
-    icon: Setting,
+    icon: SwitchFilled,
   },
   {
     path: '/yanglegeyang',
     name: 'yanglegeyang',
     title: '羊了个羊',
-    icon: Setting,
+    icon: SwitchFilled,
   },
   {
     path: '/gongneng',
@@ -53,19 +54,19 @@ export default [
         path: '/beibao',
         name: 'beibao',
         title: '背包',
-        icon: Setting,
+        icon: Location,
       },
       {
         path: '/juese',
         name: 'juese',
         title: '角色',
-        icon: Setting,
+        icon: ZoomOut,
       },
       {
         path: '/tujian',
         name: 'tujian',
         title: '图鉴',
-        icon: Setting,
+        icon: Document,
       },
       {
         path: '/qianghua',
