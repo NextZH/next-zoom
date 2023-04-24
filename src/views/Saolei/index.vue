@@ -153,7 +153,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, watch } from 'vue';
-import NSelect from './../components/N-select.vue';
+import NSelect from './components/N-select.vue';
 import moment from 'moment'
 
 interface childrenType {

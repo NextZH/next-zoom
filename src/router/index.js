@@ -3,7 +3,7 @@ import menu from '../constant/menu.ts'
 
 const routerComponent={
   Home:()=>import('../views/Home.vue'),
-  Saolei:()=>import('../views/Saolei.vue'),
+  Saolei:()=>import('../views/Saolei/index.vue'),
   Shudu:()=>import('../views/Shudu.vue'),
   Wuziqi:()=>import('../views/Wuziqi/index.vue'),
   Xiangqi:()=>import('../views/Xiangqi/index.vue'),
