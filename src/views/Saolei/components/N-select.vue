@@ -83,14 +83,15 @@ const mouseleave = () => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/mixins.scss";
 .select {
   margin: 5px 10px;
   width: 160px;
   display: inline-block;
   position: relative;
   .input {
-    box-shadow: 0px 1px 5px 1px skyblue;
-    border: 1px solid skyblue;
+    box-shadow: 0px 1px 5px 1px $themeColor;
+    border: 1px solid $themeColor;
     border-radius: 5px;
     display: flex;
     align-items: center;
@@ -105,7 +106,7 @@ const mouseleave = () => {
       display: inline-block;
       width: 15px;
       height: 15px;
-      color: skyblue;
+      color: $themeColor;
     }
 
     .clear {
@@ -159,7 +160,7 @@ const mouseleave = () => {
 
       &:hover {
         color: white;
-        background-color: skyblue;
+        background-color: $themeColor;
       }
     }
   }

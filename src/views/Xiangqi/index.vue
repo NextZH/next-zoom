@@ -894,6 +894,7 @@ $bold: 60px;
 }
 
 .colNum {
+  flex-direction: column;
   @include num(width, $bold)
 }
 

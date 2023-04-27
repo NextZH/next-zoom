@@ -532,7 +532,7 @@ const leaveHelp = () => {
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/mixins.scss";
+@import "./../../assets/mixins.scss";
 .page {
   // height: 100vh;
   box-sizing: border-box;
@@ -566,7 +566,7 @@ const leaveHelp = () => {
       padding: 10px 20px;
       border-radius: 10px 10px 0 0;
       color: red;
-      background-color: skyblue;
+      background-color: $themeColor;
     }
 
     .content {
@@ -634,7 +634,7 @@ const leaveHelp = () => {
     // width: 30%;
     min-width: 400px;
     border-radius: 5px;
-    border: 1px solid skyblue;
+    border: 1px solid $themeColor;
     margin: 0 20px;
     padding: 20px;
     box-sizing: border-box;
@@ -656,7 +656,7 @@ const leaveHelp = () => {
 
       .content {
         margin: 10px 0;
-        border: 1px solid skyblue;
+        border: 1px solid $themeColor;
         padding: 5px;
         border-radius: 5px;
         color: white;
@@ -736,7 +736,7 @@ const leaveHelp = () => {
 .unActiveItem {
   cursor: pointer;
   color: white;
-  background-color: skyblue;
+  background-color: $themeColor;
 }
 
 .unActiveItemHover {
@@ -772,8 +772,8 @@ const leaveHelp = () => {
 
 button {
   background-color: white;
-  border: 1px solid skyblue;
-  color: skyblue;
+  border: 1px solid $themeColor;
+  color: $themeColor;
   padding: 10px 20px;
   border-radius: 5px;
   margin: 5px 10px;
@@ -781,16 +781,16 @@ button {
   transition: 0.5s;
 
   &:hover {
-    background-color: skyblue;
+    background-color: $themeColor;
     color: white;
   }
 }
 
 input[type='text'] {
-  box-shadow: 0px 1px 5px 1px skyblue;
+  box-shadow: 0px 1px 5px 1px $themeColor;
   padding: 10px 20px;
   margin: 5px 10px;
-  border: 1px solid skyblue;
+  border: 1px solid $themeColor;
   border-radius: 5px;
   width: 120px;
   background-color: white;
@@ -820,7 +820,7 @@ input[type='text'] {
     margin: 5px 10px;
     color: white;
     cursor: pointer;
-    background-color: skyblue;
+    background-color: $themeColor;
     border-radius: 13px;
   }
 

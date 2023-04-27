@@ -144,7 +144,7 @@ const clickCard = (item: cardType) => {
 @import "../../assets/mixins.scss";
 
 .el-header {
-  background-image: radial-gradient(farthest-side at 50% 100%, skyblue, white);
+  background-image: radial-gradient(farthest-side at 50% 100%, $themeColor, white);
 }
 
 .el-header,
@@ -154,7 +154,7 @@ const clickCard = (item: cardType) => {
 }
 
 // .el-footer{
-//   background-image: radial-gradient(farthest-side at 50% 100%, skyblue, white);
+//   background-image: radial-gradient(farthest-side at 50% 100%, $themeColor, white);
 // }
 .container {
   $containerLength: var(--containerLength);
