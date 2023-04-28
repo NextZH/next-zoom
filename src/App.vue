@@ -1,6 +1,6 @@
 <template>
   <div class="common-layout">
-    <canvas id="canvas"></canvas>
+    <!-- <canvas id="canvas"></canvas> -->
     <div class="circleBox" v-if="showCircle">
       <div class="circle" v-for="item in circleBox" :key="item.id"
         :style="{ backgroundColor: item.show ? `rgba(${item.red},${item.green},${item.blue},${item.alpha})` : 'rgba(0,0,0,0)', 'transition-duration': `${item.show ? 0 : 1}s`, 'transform': item.show ? 'rotate(1,1)' : 'rotate(0.5,0.5)' }"
@@ -8,12 +8,8 @@
     </div>
     <el-container class="container">
       <el-header>
-        <HeaderPage v-model:isCollapse="isCollapse" v-model:showCircle="showCircle" v-model:showClick="showClick"
+        <HeaderPage v-model:isCollapse="isCollapse" v-model:showCircle="showCircle" v-model:showClick="showClick" v-model:showBackground="showBackground"
           @changeSetShowClickFlag="changeSetShowClickFlag"></HeaderPage>
-        <!-- <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-          <el-radio-button :label="false">展开</el-radio-button>
-          <el-radio-button :label="true">收缩</el-radio-button>
-        </el-radio-group> -->
       </el-header>
       <el-container class="container-2">
         <el-aside>
@@ -57,10 +53,14 @@ import HeaderPage from './views/HeaderPage.vue';
 import { ref, reactive, watch,onMounted } from 'vue';
 import _ from 'lodash';
 import { triggerAnime, setAnimeData,particleObj } from './animation/js/click1.js';
-import { initBackground } from './animation/js/background.js';
+import { initBackground,triggerBackground } from './animation/js/background.js';
 import Drawer from './components/Drawer.vue';
 onMounted(()=>{
   // initBackground();
+})
+const showBackground=ref(false);
+watch(showBackground,()=>{
+  triggerBackground(showBackground.value)
 })
 
 const isCollapse = ref(false);

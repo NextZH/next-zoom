@@ -1,5 +1,5 @@
 
-export const initBackground = () => {
+export const initBackground = (myCanvas) => {
   window.requestAnimationFrame = (function () {
     return window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
@@ -8,7 +8,10 @@ export const initBackground = () => {
         window.setTimeout(callback, 1000 / 2);
       };
   })();
-  var myCanvas = document.getElementById("canvas");
+  if (!myCanvas) {
+    myCanvas = document.getElementById("canvas");
+  }
+  // var myCanvas = document.getElementById("canvas");
   var ctx = myCanvas.getContext("2d");//getContext 设置画笔
 
   var num;
@@ -106,4 +109,20 @@ export const initBackground = () => {
   // window.onresize = function () {
   //   location.reload();
   // }
+}
+export const triggerBackground = (flag) => {
+  if (flag) {
+    var myCanvas = document.querySelector('#canvas');
+    if (myCanvas) {
+      document.body.removeChild(myCanvas);
+    }
+    var myCanvas = document.createElement('canvas');
+    myCanvas.setAttribute('id', 'canvas');
+    var app = document.querySelector('#app');
+    document.body.insertBefore(myCanvas, app);
+    initBackground(myCanvas);
+  } else {
+    var myCanvas = document.querySelector('#canvas');
+    document.body.removeChild(myCanvas);
+  }
 }

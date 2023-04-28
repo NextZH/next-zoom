@@ -911,7 +911,7 @@ $bold: 60px;
   $itemLength: 60px; //单位长度
   $gap: 5px; //单位间隔
   background-color: #000000;
-  height: calc(($itemLength + $gap) * ($boxRepeatTimes + 1));
+  height: calc(($itemLength + $gap) * ($boxRepeatTimes + 1) + 10px);
   border: 2px solid;
   padding: $gap;
   padding-bottom: 0;
