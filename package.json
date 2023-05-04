@@ -24,6 +24,7 @@
     "sass": "^1.58.3",
     "sass-loader": "^13.2.0",
     "vue": "^3.2.47",
+    "vue-baidu-map-3x": "^1.0.33",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {

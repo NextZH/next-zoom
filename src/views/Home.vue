@@ -5,7 +5,6 @@
       <div class="row-left" v-if="style[0].left.show">
         <div class="item">
           <div class="item-left">
-            <!-- <el-icon><Clock /></el-icon> -->
             <img src="../assets/time.svg" alt="" width="30" height="30">
             <div class="time">{{ time }}</div>
           </div>
@@ -24,7 +23,14 @@
         <Carousel :list="list" :height="style[0].height"></Carousel>
       </div>
       <div class="row-right" v-if="style[0].right.show">
-        <!-- <div id="container"></div> -->
+        <!-- 百度地图 -->
+        <baidu-map class="bm-view" :center="city" :zoom="15" >
+          <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-scale>
+          <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
+          <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-map-type>
+          <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true"></bm-geolocation>
+          <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
+        </baidu-map>
       </div>
     </div>
     <div class="row"
@@ -44,7 +50,6 @@
 import Carousel from '@/components/Carousel.vue';
 import { ref, reactive, computed, onUnmounted } from 'vue';
 import moment from 'moment';
-import {Clock} from '@element-plus/icons-vue'
 
 const value = ref(new Date())
 const list = reactive([1, 2, 3, 4]);
@@ -114,9 +119,7 @@ const getTime = () => {
   }, 1000);
 }
 
-// const initMap=()=>{
-//   var map = new BMapGL.Map("container");
-// }
+const city=ref('成都');
 const created = () => {
   getTime();
 }
@@ -165,16 +168,22 @@ onUnmounted(() => {
       display: flex;
       justify-content: center;
       align-items: center;
+
       // flex-direction: column;
       // @include f-sb-c();
-      .item-left,.item-right{
+      .item-left,
+      .item-right {
         flex: 1 0;
         text-align: center;
       }
-      .time{
+
+      .time {
         font-size: 30px;
       }
-      .time,.date,.week{
+
+      .time,
+      .date,
+      .week {
         color: #999;
       }
     }
@@ -194,5 +203,9 @@ onUnmounted(() => {
   .row-right {
     flex: $right;
   }
+}
+.bm-view {
+  width: 100%;
+  height: 300px;
 }
 </style>
