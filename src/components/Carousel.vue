@@ -9,10 +9,13 @@
 </template>
 
 <script setup lang="ts">
-// interface PropsType{
-
-// }
-const props=withDefaults(defineProps(),{
+interface PropsType{
+  isCard?:boolean,
+  interval?:number,
+  height?:string,
+  list:any[],
+}
+const props=withDefaults(defineProps<PropsType>(),{
   isCard:false,
   interval:4000,
   height:'200px',
@@ -21,7 +24,7 @@ const props=withDefaults(defineProps(),{
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .el-carousel__item h3 {
   color: #475669;
   opacity: 0.75;
