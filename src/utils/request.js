@@ -1,6 +1,6 @@
 import router from "@/router";
 import axios from "axios";
-import { MessageBox } from "element-plus";
+// import { MessageBox } from "element-plus";
 
 axios.defaults.baseURL = "http://47.98.128.191:3000"
 
