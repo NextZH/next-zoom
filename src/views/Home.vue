@@ -50,6 +50,7 @@
 import Carousel from '@/components/Carousel.vue';
 import { ref, reactive, computed, onUnmounted } from 'vue';
 import moment from 'moment';
+// import { getWeather } from '../nodejs/weather'
 
 const value = ref(new Date())
 const list = reactive([1, 2, 3, 4]);
@@ -111,17 +112,25 @@ const weekformat = (week: string) => {
   }
 }
 const time = ref(moment(new Date()).format('HH:mm:ss'));
-const timer = ref(0);//定时器
+const timer:any = ref(0);//定时器
 const getTime = () => {
   timer.value = setInterval(() => {
     time.value = moment(new Date()).format('HH:mm:ss');
     // console.log(time.value);
   }, 1000);
 }
+let weather=reactive({});
+const getWeatherAsync=async ()=>{
+  // const res=await getWeather();
+  // console.log(res);
+  // weather=res;
+}
 
 const city=ref('成都');
 const created = () => {
   getTime();
+  // console.log(weather);
+  getWeatherAsync();
 }
 created();
 onUnmounted(() => {
@@ -179,6 +188,10 @@ onUnmounted(() => {
 
       .time {
         font-size: 30px;
+      }
+      .week,
+      .date{
+        font-size: 20px;
       }
 
       .time,

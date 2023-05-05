@@ -6,7 +6,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import App from './App.vue'
 import router from './router'
 import BaiduMap from 'vue-baidu-map-3x'
-
+import './utils/request'
 import './assets/main.css'
 // import './assets/theme.scss'
 
