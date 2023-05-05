@@ -5,13 +5,13 @@
         width="160">
         <el-input v-model="form[key]" />
       </el-form-item>
-      <template v-if="(key as any) == 'meta'">
+      <!-- <template v-if="(key as any) == 'meta'">
         <template v-for="value, key2 in menuItem.meta " :key="key2">
           <el-form-item :label="key2" width="160" v-if="(key2 as any) != 'important' ">
             <el-input v-model="form.meta[key2]" />
           </el-form-item>
         </template>
-      </template>
+      </template> -->
     </template>
     <el-form-item label="icon">
       <el-radio-group v-model="form.icon">

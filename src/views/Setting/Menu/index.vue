@@ -7,7 +7,7 @@
     </el-form-item>
     <el-table :data="showMenu" stripe style="width: 100%;height: 60vh;" row-key="path">
       <template v-for="item, key in   menuItem  " :key="key">
-        <el-table-column :prop="key" :label="key"  v-if="(key as any) != 'iconPath'">
+        <el-table-column :prop="key" :label="key" v-if="(key as any) != 'iconPath'">
           <template #default="{ row }: any" v-if="(key as any) == 'icon'">
             <el-icon :size=" 30 ">
               <component v-if=" row.icon " :is=" row.icon.render " />
@@ -19,11 +19,27 @@
           </template>
           <template #default="{ row }:any" v-else-if="(key as any) == 'meta'">
             <el-table-column v-for="item, key2 in menuItem.meta" :key="key2" :prop="key2" :label="key2" width="180">
-              <template #header v-if="(key2 as any) == 'important'">
-                是否为核心组件
+              <template #header>
+                <template v-if="(key2 as any) == 'important'">
+                  是否为核心组件
+                </template>
+                <template v-else-if="(key2 as any) == 'isGame'">
+                  是否是游戏
+                </template>
+                <template v-else>
+                  {{ key2 }}
+                </template>
               </template>
-              <template #default="{ row }:any" v-if="(key2 as any) == 'important'">
-                {{ row.meta.important?'是':'否' }}
+              <template #default="{ row }:any">
+                <template  v-if="(key2 as any) == 'important'">
+                  {{ row.meta.important?'是':'否' }}
+                </template>
+                <template v-else-if="(key2 as any) == 'isGame'">
+                  {{ row.meta.isGame?'是':'否' }}
+                </template>
+                <template v-else>
+                  {{ row.meta[key2] }}
+                </template>
               </template>
             </el-table-column>
           </template>
@@ -95,7 +111,7 @@ const iconList = computed(() => {
 });
 
 const formatComp = (component: any) => {
-  return component?component.toString().split("\"")[1]:'无';
+  return component ? component.toString().split("\"")[1] : '无';
 }
 const updateItem = (item: any) => {
   isAdd.value = false;

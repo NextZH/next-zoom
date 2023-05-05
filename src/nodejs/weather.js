@@ -1,6 +1,8 @@
 const axios=require('axios');
 const cheerio=require('cheerio');
+const fs =require('fs');
 const { log } = require('console');
+// const schedule=require('node-schedule');
 // import axios from 'axios';
 // import {load} from 'cheerio';
 const getWeather=async ()=>{
@@ -29,17 +31,42 @@ const getWeather=async ()=>{
     // log($(e).text())
   })
   // log(arr);
-  console.log({
-    currentCity,
-    currentTemp,
-    currentWeather,
-    weatherList:arr
-  });
-  return {
+  // console.log({
+  //   currentCity,
+  //   currentTemp,
+  //   currentWeather,
+  //   weatherList:arr
+  // });
+  const data={
     currentCity,
     currentTemp,
     currentWeather,
     weatherList:arr
   }
+  // return {
+  //   currentCity,
+  //   currentTemp,
+  //   currentWeather,
+  //   weatherList:arr
+  // }
+  fsWrite('../spiderData/weatherData.js',`export const weatherData=${JSON.stringify(data)}`)
 }
+
+function fsWrite(path,content){
+  return new Promise((res,rej)=>{
+    fs.writeFile(path,content,{encoding:'utf-8'},err=>{
+      if (!err) {
+        console.log('写入成功！');
+        res('写入成功！')
+      }else{
+        rej(err)
+      }
+    })
+  })
+  
+}
+
 getWeather();
+// const job=schedule.scheduleJob('* /1 * * * *',()=>{
+//   getWeather();
+// })

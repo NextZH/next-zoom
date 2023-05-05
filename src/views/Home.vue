@@ -3,7 +3,7 @@
     <div class="row"
       :style="{ '--height': style[0].height, '--left': style[0].left.flex, '--right': style[0].right.flex, '--grow': style[0].center.grow, '--shrink': style[0].center.shrink, }">
       <div class="row-left" v-if="style[0].left.show">
-        <div class="item">
+        <div class="item clock">
           <div class="item-left">
             <img src="../assets/time.svg" alt="" width="30" height="30">
             <div class="time">{{ time }}</div>
@@ -13,10 +13,29 @@
             <div class="week">星期{{ weekformat(week) }}</div>
           </div>
         </div>
-        <div class="item">
+        <div class="item sky">
           <div class="item-left">
+            <div class="temp">{{ todayWeather.currentTemp }}</div>
+            <div class="city">
+              <span class="position">
+                <!-- <i class="fal fa-map-marker-alt" /> -->
+                <img src="/src/assets/other/定位.svg" alt="" width="25" height="25">
+              </span>&nbsp;
+              <span>{{ todayWeather.currentCity }}</span>&nbsp;
+              <span>{{ todayWeather.currentWeather }}</span>
+              <span>
+                <img :src="`/src/assets/weather/${todayWeather.currentWeather}.svg`" alt="" width="30" height="30">
+              </span>
+            </div>
+            <div class="list">
+              <span v-for="item,index in todayWeather.weatherList" :key="index">
+                <span>{{ item.title }}</span>&nbsp;
+                <span>{{ item.value }}</span>
+                <span v-if="index!==todayWeather.weatherList.length-1">&nbsp;|&nbsp;</span>
+              </span>
+            </div>
           </div>
-          <div class="item-right"></div>
+          <!-- <div class="item-right"></div> -->
         </div>
       </div>
       <div class="row-center" v-if="style[0].center.show">
@@ -51,9 +70,29 @@ import Carousel from '@/components/Carousel.vue';
 import { ref, reactive, computed, onUnmounted } from 'vue';
 import moment from 'moment';
 // import { getWeather } from '../nodejs/weather'
-
+import { weatherData } from '../spiderData/weatherData.js'
+const todayWeather=reactive(weatherData);
 const value = ref(new Date())
-const list = reactive([1, 2, 3, 4]);
+const list = reactive([
+  {
+    name:'1.jpg',
+  },
+  {
+    name:'2.jpg',
+  },
+  {
+    name:'3.jpg',
+  },
+  {
+    name:'4.jpg',
+  },
+  {
+    name:'5.jpg',
+  },
+  {
+    name:'6.png',
+  },
+]);
 const style = reactive([
   {
     height: '300px',
@@ -197,8 +236,56 @@ onUnmounted(() => {
       .time,
       .date,
       .week {
-        color: #999;
+        color: white;
+        text-shadow: 0px 0px 4px black;
       }
+      .temp{
+        font-size: 60px;
+        color: #409EFF;
+        text-shadow: 0px 5px 6px white;
+      }
+      .city{
+        font-size: 20px;
+        @include f-c-c();
+        span{
+          margin: 5px;
+          @include f-c-c();
+        }
+        .position{
+          animation: move infinite 1.5s ease-in-out;
+        }
+        @keyframes move {
+          0%{
+            transform: translateY(0px);
+          }
+          50%{
+            transform: translateY(-10px);
+          }
+          100%{
+            transform: translateY(0px);
+          }
+        }
+      }
+      .list{
+        font-size: 14px;
+      }
+      .city,.list{
+        color: white;
+        text-shadow: 0px 3px 5px black;
+      }
+    }
+    .sky{
+      background-image: url(../assets/sky.webp);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+    .clock{
+      background-image: url(../assets/clock.webp);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      
     }
 
     @include border();

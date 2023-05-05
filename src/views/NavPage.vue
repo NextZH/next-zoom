@@ -52,6 +52,8 @@ const handleSelect = (key: string, keyPath: string[]) => {
   height: 100%;
 }
 .el-menu{
+  // background-color: $themeColor;
+  // background-image: url();
   @include scrollBar();
 }
 </style>

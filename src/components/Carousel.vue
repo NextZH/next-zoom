@@ -2,7 +2,11 @@
   <div>
     <el-carousel :interval="props.interval" :type="props.isCard?'card':''" :height="props.height">
       <el-carousel-item v-for="item in props.list" :key="item">
-        <h3 text="2xl" justify="center">{{ item }}</h3>
+        <h3 v-if="typeof item=='number'" text="2xl" justify="center">{{ item }}</h3>
+        <template v-else>
+          <img v-if="item.path" :src="item.path+item.name" alt=""  >
+          <img v-else :src="`/src/assets/img/${item.name}`" alt=""  >
+        </template>
       </el-carousel-item>
     </el-carousel>
   </div>
@@ -39,5 +43,9 @@ const props=withDefaults(defineProps<PropsType>(),{
 
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
+}
+img{
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -8,6 +8,7 @@ import router from './router'
 import BaiduMap from 'vue-baidu-map-3x'
 import './utils/request'
 import './assets/main.css'
+import 'font-awesome/css/font-awesome.min.css';
 // import './assets/theme.scss'
 
 import './animation/index.js'

@@ -17,6 +17,7 @@ const menu = [
     icon: IconMenu,
     meta:{
       important:true,
+      isGame:false,
     },
   },
   {
@@ -26,6 +27,7 @@ const menu = [
     iconPath: 'saolei.svg',
     meta:{
       important:true,
+      isGame:true,
     },
   },
   {
@@ -35,6 +37,7 @@ const menu = [
     iconPath: 'shudu.svg',
     meta:{
       important:true,
+      isGame:true,
     },
   },
   {
@@ -44,6 +47,7 @@ const menu = [
     iconPath: 'wuziqi.svg',
     meta:{
       important:true,
+      isGame:true,
     },
   },
   {
@@ -53,6 +57,7 @@ const menu = [
     iconPath: 'xiangqi.svg',
     meta:{
       important:true,
+      isGame:true,
     },
   },
   {
@@ -62,6 +67,7 @@ const menu = [
     iconPath: 'yanglegeyang.svg',
     meta:{
       important:true,
+      isGame:true,
     },
   },
   {
@@ -71,6 +77,7 @@ const menu = [
     icon: Setting,
     meta:{
       important:true,
+      isGame:false,
     },
     children: [
       {
@@ -80,6 +87,7 @@ const menu = [
         icon: Location,
         meta:{
           important:false,
+          isGame:false,
         },
       },
       {
@@ -89,6 +97,7 @@ const menu = [
         icon: ZoomOut,
         meta:{
           important:false,
+          isGame:false,
         },
       },
       {
@@ -98,6 +107,7 @@ const menu = [
         icon: Document,
         meta:{
           important:false,
+          isGame:false,
         },
       },
       {
@@ -107,6 +117,7 @@ const menu = [
         icon: Setting,
         meta:{
           important:false,
+          isGame:false,
         },
       },
     ]
@@ -118,6 +129,7 @@ const menu = [
     icon: Setting,
     meta:{
       important:true,
+      isGame:false,
     },
     children: [
       {
@@ -127,6 +139,7 @@ const menu = [
         icon: Location,
         meta:{
           important:true,
+          isGame:false,
         },
       },
     ]
