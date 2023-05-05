@@ -57,6 +57,7 @@ import { initBackground,triggerBackground } from './animation/js/background.js';
 import Drawer from './components/Drawer.vue';
 onMounted(()=>{
   // initBackground();
+  triggerBackground(false);
 })
 const showBackground=ref(false);
 watch(showBackground,()=>{
@@ -195,11 +196,13 @@ const moveLeave = (item: any) => {
   border-radius: 5px;
   box-shadow: 0px 0px 5px 1px #ccc;
   background-color: white;
+  // background-image: $backgroundColor;
   @include scrollBar();
 }
 
 .el-header {
   background-color: $themeColor;
+  // background-image: $backgroundColor;
   // background-image: radial-gradient(farthest-side at 50% 100%, $themeColor, white);
   display: flex;
   align-items: center;

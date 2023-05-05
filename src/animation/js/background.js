@@ -111,18 +111,15 @@ export const initBackground = (myCanvas) => {
   // }
 }
 export const triggerBackground = (flag) => {
-  if (flag) {
-    var myCanvas = document.querySelector('#canvas');
-    if (myCanvas) {
-      document.body.removeChild(myCanvas);
-    }
-    var myCanvas = document.createElement('canvas');
-    myCanvas.setAttribute('id', 'canvas');
-    var app = document.querySelector('#app');
-    document.body.insertBefore(myCanvas, app);
-    initBackground(myCanvas);
-  } else {
-    var myCanvas = document.querySelector('#canvas');
+  var myCanvas = document.querySelector('#canvas');
+  if (myCanvas) {
     document.body.removeChild(myCanvas);
+  }
+  var myCanvas = document.createElement('canvas');
+  myCanvas.setAttribute('id', 'canvas');
+  var app = document.querySelector('#app');
+  document.body.insertBefore(myCanvas, app);
+  if (flag) {
+    initBackground(myCanvas);
   }
 }

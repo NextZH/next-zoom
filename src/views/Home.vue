@@ -208,7 +208,7 @@ onUnmounted(() => {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
+    background-color: white;
     .item {
       width: 100%;
       height: 50%;
@@ -216,6 +216,7 @@ onUnmounted(() => {
       display: flex;
       justify-content: center;
       align-items: center;
+      background-color: white;
 
       // flex-direction: column;
       // @include f-sb-c();
@@ -281,11 +282,11 @@ onUnmounted(() => {
       background-size: 100% 100%;
     }
     .clock{
-      background-image: url(../assets/clock.webp);
+      background-image: -webkit-cross-fade(url(../assets/sky.webp),url(../assets/clock.webp),50%);
+      // background-image: cross-fade(url(../assets/sky.webp),url(../assets/clock.webp),50%);
       background-position: center center;
       background-repeat: no-repeat;
       background-size: 100% 100%;
-      
     }
 
     @include border();

@@ -379,7 +379,9 @@ export const triggerAnime = (flag) => {
     window.Canvas = new Universe(canvas);
   } else {
     var canvas = document.querySelector('#canvas1');
-    document.body.removeChild(canvas);
+    if (canvas1) {
+      document.body.removeChild(canvas1);
+    }
   }
 }
 export const setAnimeData = (obj) => {

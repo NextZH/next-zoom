@@ -142,6 +142,16 @@ const menu = [
           isGame:false,
         },
       },
+      {
+        path: '/theme',
+        name: 'theme',
+        title: '主题设置',
+        icon: Location,
+        meta:{
+          important:true,
+          isGame:false,
+        },
+      },
     ]
   },
 ]
