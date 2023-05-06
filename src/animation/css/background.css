@@ -1,7 +1,7 @@
 #canvas {
   position: fixed;
   background: #ccc;
-  /* background-image: linear-gradient(#e6646483, #9198e584); */
+  background-image: linear-gradient(to right,#fff0f0, #9198e584,#fff0f0);
   width: 100%;
   height: 100vh;
   overflow: auto;

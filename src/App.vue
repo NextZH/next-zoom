@@ -202,8 +202,8 @@ const moveLeave = (item: any) => {
 
 .el-header {
   background-color: $themeColor;
-  // background-image: $backgroundColor;
-  // background-image: radial-gradient(farthest-side at 50% 100%, $themeColor, white);
+  background-image: linear-gradient(#fff0f0, #9198e584);
+  // background-image: radial-gradient(farthest-side at 50% 100%,  white,$themeColor);
   display: flex;
   align-items: center;
   z-index: 1;

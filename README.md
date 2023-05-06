@@ -1,27 +1,24 @@
-# saolei
+# personal-center
 
-This template should help get you started developing with Vue 3 in Vite.
+## 项目介绍
 
-## Recommended IDE Setup
+#### 技术栈：采用vue3+ts+pinia+axios+vite+element-plus
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+#### 原名：saolei,最初只为做一些小游戏而创建的项目，后改为个人主页,大部分页面为纯前端，少部分需要后端提供数据，若需要体验完整功能，请划到本文档最下方查看后端相关
 
-## Type Support for `.vue` Imports in TS
+```sh
+作者：Next
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+B站：★Next★
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+QQ：1197299127
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+邮箱：1197299127@qq.com
+```
 
-## Customize configuration
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-## Project Setup
+## Project Setup(程序安装)
 
 ```sh
 npm install
@@ -44,3 +41,18 @@ npm run build
 ```sh
 npm run lint
 ```
+
+## 后端相关
+
+### 项目名: 
+
+```sh
+personal-center-back
+```
+
+### 地址:
+
+```sh
+https://github.com/NextZH/personal-center-back
+```
+

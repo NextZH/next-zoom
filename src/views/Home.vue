@@ -14,17 +14,17 @@
           </div>
         </div>
         <div class="item sky">
-          <div class="item-left">
+          <div class="item-left" v-loading="weatherLoading">
             <div class="temp">{{ todayWeather.currentTemp }}</div>
             <div class="city">
               <span class="position">
                 <!-- <i class="fal fa-map-marker-alt" /> -->
-                <img src="/src/assets/other/定位.svg" alt="" width="25" height="25">
+                <img v-if="todayWeather.currentCity" src="/src/assets/other/定位.svg" alt="" width="25" height="25">
               </span>&nbsp;
               <span>{{ todayWeather.currentCity }}</span>&nbsp;
               <span>{{ todayWeather.currentWeather }}</span>
               <span>
-                <img :src="`/src/assets/weather/${todayWeather.currentWeather}.svg`" alt="" width="30" height="30">
+                <img v-if="todayWeather.currentWeather" :src="`/src/assets/weather/${todayWeather.currentWeather}.svg`" alt="" width="30" height="30">
               </span>
             </div>
             <div class="list">
@@ -70,9 +70,10 @@ import Carousel from '@/components/Carousel.vue';
 import { ref, reactive, computed, onUnmounted } from 'vue';
 import moment from 'moment';
 // import { getWeather } from '../nodejs/weather'
-import { weatherData } from '../spiderData/weatherData.js'
-const todayWeather=reactive(weatherData);
-const value = ref(new Date())
+import {getWeather} from '@/api/home';
+let todayWeather:any=reactive({});
+const weatherLoading=ref(false);
+const value = ref(new Date());
 const list = reactive([
   {
     name:'1.jpg',
@@ -160,9 +161,11 @@ const getTime = () => {
 }
 let weather=reactive({});
 const getWeatherAsync=async ()=>{
-  // const res=await getWeather();
+  weatherLoading.value=true;
+  const res=await getWeather();
   // console.log(res);
-  // weather=res;
+  todayWeather=res.data;
+  weatherLoading.value=false;
 }
 
 const city=ref('成都');

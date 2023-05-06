@@ -1,1 +1,0 @@
-export const weatherData={"currentCity":"成都","currentTemp":"25°","currentWeather":"多云","weatherList":[{"title":"温度","value":"16~26°"},{"title":"紫外线","value":"弱"},{"title":"湿度","value":"62%"}]}
