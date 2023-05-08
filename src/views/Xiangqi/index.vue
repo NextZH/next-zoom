@@ -31,13 +31,13 @@
                 <!-- 棋子 -->
                 <div class="container container2" :style="{ '--lines': lines, }">
                   <div :class="{
-                      item: true,
-                      red: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'red' : false,
-                      balck: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'black' : false,
-                      hasChess: item.hasChess && !(item.moveIn && item.movable),
-                      pickupHasChess: pickUp && pickUpChess.id == item.chessInfo.id && item.hasChess && !(item.moveIn && item.movable),
-                      nothasChess: pickUp && item.movable && item.moveIn,
-                    }" v-for="item in chesses" :key="item.id" @click="drop(item)" @mouseenter="mouseenter(item)"
+                    item: true,
+                    red: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'red' : false,
+                    balck: (item.hasChess || item.moveIn) ? (item.showInfo.type ? item.showInfo.type : item.chessInfo.type) == 'black' : false,
+                    hasChess: item.hasChess && !(item.moveIn && item.movable),
+                    pickupHasChess: pickUp && pickUpChess.id == item.chessInfo.id && item.hasChess && !(item.moveIn && item.movable),
+                    nothasChess: pickUp && item.movable && item.moveIn,
+                  }" v-for="item in chesses" :key="item.id" @click="drop(item)" @mouseenter="mouseenter(item)"
                     @mouseleave="mouseleave(item)">
                     <span v-if="item.hasChess || (item.moveIn && item.movable)">
                       <template v-if="item.showInfo.name">
@@ -112,7 +112,7 @@ import { ref, computed, reactive, watch } from 'vue';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
 const themeStore = useThemeStore();
-const { buttonType,buttonColor } = storeToRefs(themeStore);
+const { buttonType, buttonColor } = storeToRefs(themeStore);
 
 interface chessesItem {
   id: number,
@@ -891,9 +891,22 @@ $bold: 60px;
 
 .rowNum {
   padding: 0 30px;
+  height: $bold - 20px;
 
-  @include num(height, $bold) {
+  span {
     width: $bold;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  @include f-sb-c();
+
+  &:nth-child(3) {
+    span {
+      align-items: flex-end;
+    }
   }
 }
 

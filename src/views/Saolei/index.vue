@@ -603,7 +603,8 @@ const leaveHelp = () => {
 
   // justify-content: space-evenly;
   .left {
-    width: 800px;
+    width: 700px;
+    height:600px;
     flex-shrink: 0;
 
     .leftBox {
@@ -632,7 +633,7 @@ const leaveHelp = () => {
 
   .right {
     // width: 30%;
-    min-width: 400px;
+    min-width: 380px;
     border-radius: 5px;
     border: 1px solid $themeColor;
     margin: 0 20px;

@@ -294,7 +294,7 @@ const repenting = () => {
   display: flex;
 }
 
-$bold: 30px;
+$bold: 25px;
 
 .rowNum {
   padding: 0 20px;
