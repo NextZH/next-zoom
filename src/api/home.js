@@ -6,3 +6,9 @@ export const getWeather=()=>{
     url:'/home/weather'
   })
 }
+export const getWeekWeather=()=>{
+  return axios({
+    method:'get',
+    url:'/home/weekWeather'
+  })
+}

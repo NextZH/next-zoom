@@ -379,8 +379,8 @@ export const triggerAnime = (flag) => {
     window.Canvas = new Universe(canvas);
   } else {
     var canvas = document.querySelector('#canvas1');
-    if (canvas1) {
-      document.body.removeChild(canvas1);
+    if (canvas) {
+      document.body.removeChild(canvas);
     }
   }
 }

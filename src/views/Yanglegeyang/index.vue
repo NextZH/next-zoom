@@ -1,10 +1,10 @@
 <template>
   <el-container>
     <el-header>
-      <el-button type="primary" plain>洗牌</el-button>
-      <el-button type="primary" plain>提示</el-button>
-      <el-button type="primary" plain>Primary</el-button>
-      <el-button type="primary" round>Primary</el-button>
+      <el-button :type="buttonType" plain>洗牌</el-button>
+      <el-button :type="buttonType" plain>提示</el-button>
+      <el-button :type="buttonType" plain>Primary</el-button>
+      <el-button :type="buttonType" round>Primary</el-button>
     </el-header>
     <el-main>
       <div class="container" :style="{ '--containerLength': containerLength + 'px', '--cardLength': cardLength + 'px' }">
@@ -31,6 +31,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
+import { useThemeStore } from '@/stores/Theme';
+import { storeToRefs } from 'pinia';
+const themeStore = useThemeStore();
+const { buttonType,buttonColor } = storeToRefs(themeStore);
 
 interface cardType {
   id: number,

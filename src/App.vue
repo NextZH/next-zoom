@@ -197,6 +197,7 @@ const moveLeave = (item: any) => {
   box-shadow: 0px 0px 5px 1px #ccc;
   background-color: white;
   // background-image: $backgroundColor;
+  background-image: url(./assets/webp/background2.webp);
   @include scrollBar();
 }
 

@@ -95,7 +95,7 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="20">
-            <el-button type="primary" @click="init">重新开始</el-button>
+            <el-button :type="buttonType" @click="init">重新开始</el-button>
             <el-button type="danger" @click="repenting"
               :disabled="repentChesses[!chessColor ? 'red' : 'black'].list.length == 0">{{ `${!chessColor ? '红方' :
                 '黑方'}悔棋`
@@ -109,6 +109,10 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive, watch } from 'vue';
+import { useThemeStore } from '@/stores/Theme';
+import { storeToRefs } from 'pinia';
+const themeStore = useThemeStore();
+const { buttonType,buttonColor } = storeToRefs(themeStore);
 
 interface chessesItem {
   id: number,

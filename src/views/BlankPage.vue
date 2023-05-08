@@ -9,8 +9,8 @@
       <span class="pageName">{{ pageName }}</span>
       】页面已被创建，请联系开发者设计页面
     </h1>
-    <el-button type="primary" @click="turnDown(false)">返回</el-button>
-    <el-button type="primary" @click="turnDown(true)">返回主页</el-button>
+    <el-button :type="buttonType" @click="turnDown(false)">返回</el-button>
+    <el-button :type="buttonType" @click="turnDown(true)">返回主页</el-button>
   </div>
 </template>
 
@@ -18,7 +18,10 @@
 import menu from '@/constant/menu';
 import { ref, reactive, watch, computed } from 'vue';
 import { usePageStore } from '@/stores/Page';
+import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
+const themeStore = useThemeStore();
+const { buttonType } = storeToRefs(themeStore);
 const pageStore = usePageStore();
 const { pageName, pageObj } = storeToRefs(pageStore);
 const { setPageName, setPageObj } = pageStore;

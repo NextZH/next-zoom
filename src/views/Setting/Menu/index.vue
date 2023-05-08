@@ -2,8 +2,8 @@
   <div>
     <MenuForm :menuItem="menuItem" :inline="true" :iconList="iconList" :form="searchForm"></MenuForm>
     <el-form-item>
-      <el-button type="primary" @click="findMenu">查找</el-button>
-      <el-button type="primary" @click="addMenu">新增</el-button>
+      <el-button :type="buttonType" @click="findMenu">查找</el-button>
+      <el-button :type="buttonType" @click="addMenu">新增</el-button>
     </el-form-item>
     <el-table :data="showMenu" stripe style="width: 100%;height: 60vh;" row-key="path">
       <template v-for="item, key in   menuItem  " :key="key">
@@ -47,7 +47,7 @@
       </template>
       <el-table-column label="操作" width="200">
         <template #default=" { row }: any ">
-          <el-button type="primary" @click=" updateItem(row) ">
+          <el-button :type="buttonType" @click=" updateItem(row) ">
             <el-icon>
               <Edit />
             </el-icon>
@@ -84,6 +84,10 @@ import { ref, reactive, computed } from 'vue';
 import _ from 'lodash';
 import Drawer from '@/components/Drawer.vue';
 import MenuForm from './components/MenuForm.vue';
+import { useThemeStore } from '@/stores/Theme';
+import { storeToRefs } from 'pinia';
+const themeStore = useThemeStore();
+const { buttonType,buttonColor } = storeToRefs(themeStore);
 const mydrawer = ref(null);//抽屉实例
 const showMenu = reactive(_.cloneDeep(menu));//展示菜单列表
 const menuItem: any = reactive(showMenu[0]);//用于循环table列项的样板对象
