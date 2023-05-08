@@ -5,7 +5,7 @@
       <div class="row-left" v-if="style[0].left.show">
         <div class="item clock">
           <div class="item-left">
-            <img src="../assets/time.svg" alt="" width="30" height="30">
+            <img src="@/assets/time.svg" alt="" width="30" height="30">
             <div class="time">{{ time }}</div>
           </div>
           <div class="item-right">
@@ -27,7 +27,7 @@
                 <img v-if="todayWeather.currentWeather" :src="`/src/assets/weather/${todayWeather.currentWeather}.svg`"
                   alt="" width="30" height="30">
               </span>
-              <el-popover placement="right" title="未来一周天气" :width="800" trigger="click">
+              <el-popover placement="right" title="未来一周天气" :width="900" trigger="click" @show="showWeekData">
                 <template #reference>
                   <span class="btn">
                     未来一周天气>>
@@ -46,6 +46,7 @@
                       <div class="temp">{{ item.temp }}</div>
                     </div>
                   </div>
+                  <div id="chart-1" style="width: 800px;height: 400px;"></div>
                 </template>
               </el-popover>
             </div>
@@ -101,9 +102,11 @@
 
 <script setup lang="ts">
 import Carousel from '@/components/Carousel.vue';
-import { ref, reactive, computed, onUnmounted } from 'vue';
+import { ref, reactive, computed, onUnmounted,onMounted } from 'vue';
 import moment from 'moment';
 import menu from '@/constant/menu';
+import * as echarts from 'echarts';
+import {option} from './constant';
 import { getWeather, getWeekWeather } from '@/api/home';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
@@ -219,8 +222,20 @@ const getWeatherAsync = async () => {
 let weekWeather: any = reactive([]);
 const getWeekWeatherAsync = async () => {
   const res = await getWeekWeather();
-  console.log(res);
+  // console.log(res);
   weekWeather = res.data;
+}
+
+const initEcharts=async ()=>{
+  const myChart= echarts.init(document.getElementById('chart-1')!);
+  // await getWeekWeatherAsync();
+  option.xAxis.data=weekWeather.map((e:any)=>e.date);
+  option.series[0].data=weekWeather.map((e:any)=>e.temp.split('~')[1].slice(0,-1));
+  option.series[1].data=weekWeather.map((e:any)=>e.temp.split('~')[0]);
+  myChart.setOption(option);
+}
+const showWeekData=()=>{
+  initEcharts();
 }
 //定位
 const city = ref('成都');
@@ -232,6 +247,12 @@ const created = () => {
   getWeekWeatherAsync();
 }
 created();
+onMounted(()=>{
+  // const timer2=setTimeout(()=>{
+  //   // initEcharts();
+  //   // clearTimeout(timer2);
+  // },1000)
+})
 onUnmounted(() => {
   clearInterval(timer.value);
 })
@@ -359,15 +380,15 @@ onUnmounted(() => {
     }
 
     .sky {
-      background-image: url(../assets/sky.webp);
+      background-image: url(@/assets/sky.webp);
       background-position: center center;
       background-repeat: no-repeat;
       background-size: cover;
     }
 
     .clock {
-      background-image: -webkit-cross-fade(url(../assets/sky.webp), url(../assets/clock.webp), 50%);
-      // background-image: cross-fade(url(../assets/sky.webp),url(../assets/clock.webp),50%);
+      background-image: -webkit-cross-fade(url(@/assets/sky.webp), url(@/assets/clock.webp), 50%);
+      // background-image: cross-fade(url(@/assets/sky.webp),url(@/assets/clock.webp),50%);
       background-position: center center;
       background-repeat: no-repeat;
       background-size: cover;
@@ -392,7 +413,7 @@ onUnmounted(() => {
   .application {
     padding: 20px;
     box-sizing: border-box;
-    background-image: url(../assets/webp/desk2.webp);
+    background-image: url(@/assets/webp/desk2.webp);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -451,9 +472,11 @@ onUnmounted(() => {
 @import '@/assets/mixins.scss';
 
 .el-popover {
+  box-sizing: border-box;
   .list {
     display: flex;
     justify-content: space-evenly;
+    margin-bottom: 30px;
 
     .item {
       margin: 5px;
@@ -464,6 +487,9 @@ onUnmounted(() => {
       @include f-c-c();
       @include border();
     }
+  }
+  .chart-1{
+    margin: 20px;
   }
 }
 </style>

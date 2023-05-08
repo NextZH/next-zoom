@@ -3,7 +3,7 @@ import menu from '../constant/menu.ts';
 import NotFound from '../views/NotFound.vue';
 
 const routerComponent = {
-  Home: () => import('../views/Home.vue'),
+  Home: () => import('../views/Home/index.vue'),
   Saolei: () => import('../views/Saolei/index.vue'),
   Shudu: () => import('../views/Shudu.vue'),
   Wuziqi: () => import('../views/Wuziqi/index.vue'),
