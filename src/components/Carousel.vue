@@ -1,11 +1,13 @@
 <template>
   <div>
-    <el-carousel :interval="props.interval" :type="props.isCard?'card':''" :height="props.height">
+    <el-carousel :interval="props.interval" :type="props.isCard ? 'card' : ''" :height="props.height">
       <el-carousel-item v-for="item in props.list" :key="item">
-        <h3 v-if="typeof item=='number'" text="2xl" justify="center">{{ item }}</h3>
+        <h3 v-if="typeof item == 'number'" text="2xl" justify="center">{{ item }}</h3>
         <template v-else>
-          <img v-if="item.path" :src="item.path+item.name" alt=""  >
-          <img v-else :src="`/src/assets/img/${item.name}`" alt=""  >
+          <!-- <img v-if="item.path" :src="item.path + item.name" alt="">
+          <img v-else :src="`/src/assets/img/${item.name}`" alt=""> -->
+          <div v-if="item.path" class="img" :style="{backgroundImage:`url(${item.path + item.name})`}"></div>
+          <div v-else class="img" :style="{backgroundImage:`url(/src/assets/img/${item.name})`}"></div>
         </template>
       </el-carousel-item>
     </el-carousel>
@@ -13,17 +15,17 @@
 </template>
 
 <script setup lang="ts">
-interface PropsType{
-  isCard?:boolean,
-  interval?:number,
-  height?:string,
-  list:any[],
+interface PropsType {
+  isCard?: boolean,
+  interval?: number,
+  height?: string,
+  list: any[],
 }
-const props=withDefaults(defineProps<PropsType>(),{
-  isCard:false,
-  interval:4000,
-  height:'200px',
-  list:()=>[],
+const props = withDefaults(defineProps<PropsType>(), {
+  isCard: false,
+  interval: 4000,
+  height: '200px',
+  list: () => [],
 });
 
 </script>
@@ -44,8 +46,17 @@ const props=withDefaults(defineProps<PropsType>(),{
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
 }
-img{
+
+img {
   width: 100%;
   height: 100%;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 </style>

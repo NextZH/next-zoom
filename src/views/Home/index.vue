@@ -29,7 +29,7 @@
               </span>
               <el-popover placement="right" title="未来一周天气" :width="900" trigger="click" @show="showWeekData">
                 <template #reference>
-                  <span class="btn">
+                  <span class="btn" v-if="!weatherLoading">
                     未来一周天气>>
                   </span>
                 </template>
