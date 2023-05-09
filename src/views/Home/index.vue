@@ -13,8 +13,8 @@
             <div class="week">星期{{ weekformat(week) }}</div>
           </div>
         </div>
-        <div class="item sky">
-          <div class="item-left" v-loading="weatherLoading">
+        <div class="item sky" v-loading="weatherLoading">
+          <div class="item-left">
             <div class="temp">{{ todayWeather.currentTemp }}</div>
             <div class="city">
               <span class="position">
@@ -35,7 +35,8 @@
                 </template>
                 <template #default>
                   <div class="list">
-                    <div class="item" v-for="item in weekWeather" :key="item.date" :style="{backgroundColor:buttonColor}">
+                    <div class="item" v-for="item in weekWeather" :key="item.date"
+                      :style="{ backgroundColor: buttonColor }">
                       <div class="weekName">{{ item.weekName }}</div>
                       <div class="date">{{ item.date }}</div>
                       <div class="status">{{ item.status }}</div>
@@ -76,13 +77,37 @@
       </div>
     </div>
     <div class="row"
-      :style="{ '--height': style[1].height, '--left': style[1].left.flex, '--right': style[1].right.flex, '--grow': style[0].center.grow, '--shrink': style[0].center.shrink, }">
+      :style="{ '--height': style[1].height, '--left': style[1].left.flex, '--right': style[1].right.flex, '--grow': style[1].center.grow, '--shrink': style[1].center.shrink, }">
       <div class="row-left application" v-if="style[1].left.show">
         <div class="title">
           游戏
         </div>
         <div class="content game">
           <div class="gameItem" v-for="item in gameList" :key="item.path" @click="turnTo(item)">
+            <el-icon :size="50">
+              <component v-if="item.icon" :is="item.icon.render" />
+              <img v-else :src="item.iconPath" alt="" width="50" height="50">
+            </el-icon>
+            <div>{{ item.title }}</div>
+          </div>
+        </div>
+        <div class="title">
+          功能
+        </div>
+        <div class="content game">
+          <div class="gameItem" v-for="item in funcList" :key="item.path" @click="turnTo(item)">
+            <el-icon :size="50">
+              <component v-if="item.icon" :is="item.icon.render" />
+              <img v-else :src="item.iconPath" alt="" width="50" height="50">
+            </el-icon>
+            <div>{{ item.title }}</div>
+          </div>
+        </div>
+        <div class="title">
+          设置
+        </div>
+        <div class="content game">
+          <div class="gameItem" v-for="item in settingList" :key="item.path" @click="turnTo(item)">
             <el-icon :size="50">
               <component v-if="item.icon" :is="item.icon.render" />
               <img v-else :src="item.iconPath" alt="" width="50" height="50">
@@ -97,86 +122,55 @@
         <el-calendar v-model="value" />
       </div>
     </div>
+    <div class="row"
+      :style="{ '--height': style[2].height, '--left': style[2].left.flex, '--right': style[2].right.flex, '--grow': style[2].center.grow, '--shrink': style[2].center.shrink, }">
+      <div class="row-left anime" v-if="style[2].left.show">
+        <el-tabs type="border-card">
+          <el-tab-pane :label="anime.tagList[i]" v-for="list, i in anime.dataList" :key="i">
+            <ul>
+              <li v-for="item in list">
+                <span><a :href="anime.baseURL + item.nameUrl">{{ item.name }}</a></span>
+                <span><a :href="anime.baseURL + item.numUrl">{{ item.num }}</a></span>
+              </li>
+            </ul>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+      <div class="row-center" v-if="style[2].center.show">
+        <audio :src="music" controls></audio>
+      </div>
+      <div class="row-right" v-if="style[2].right.show">
+      </div>
+    </div>
+    <div class="row" :style="{ '--height': '1px' }"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Carousel from '@/components/Carousel.vue';
-import { ref, reactive, computed, onUnmounted,onMounted } from 'vue';
+import { ref, reactive, computed, onUnmounted, onMounted } from 'vue';
 import moment from 'moment';
 import menu from '@/constant/menu';
 import * as echarts from 'echarts';
-import {option} from './constant';
-import { getWeather, getWeekWeather } from '@/api/home';
+import { option, style, list } from './constant';
+import { getWeather, getWeekWeather, getAllAnime } from '@/api/home';
+import { getMusic,getTopSong } from '@/api/wangyiyun';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
 const themeStore = useThemeStore();
-const { buttonType,buttonColor } = storeToRefs(themeStore);
+const { buttonType, buttonColor } = storeToRefs(themeStore);
 
 //游戏列表
 const gameList: any = computed(() => menu.filter((e: any) => e.meta.isGame));
+const funcList: any = computed(() => menu.find((e: any) => e.title == '功能')?.children);
+const settingList: any = computed(() => menu.find((e: any) => e.title == '设置')?.children);
 const turnTo = (item: any) => {
   location.assign(item.path);
 }
+//定位
+const city = ref('成都');
 //日历
 const value = ref(new Date());
-//轮播图
-const list = reactive([
-  {
-    name: '1.jpg',
-  },
-  {
-    name: '2.jpg',
-  },
-  {
-    name: '3.jpg',
-  },
-  {
-    name: '4.jpg',
-  },
-  {
-    name: '5.jpg',
-  },
-  {
-    name: '6.png',
-  },
-]);
-//布局样式
-const style = reactive([
-  {
-    height: '300px',
-    left: {
-      flex: '1 0',
-      show: true,
-    },
-    center: {
-      grow: '2',
-      shrink: '0',
-      show: true,
-    },
-    right: {
-      flex: '1 0',
-      show: true,
-    },
-  },
-  {
-    height: '350px',
-    left: {
-      flex: '1 0',
-      show: true,
-    },
-    center: {
-      // flex: '2 0',
-      grow: '2',
-      shrink: '0',
-      show: false,
-    },
-    right: {
-      flex: '1 0',
-      show: true,
-    },
-  },
-])
 //时间相关
 const date = ref(moment(new Date()).format('yyyy-MM-DD'));
 const week = ref(moment(new Date()).format('d'));
@@ -226,28 +220,51 @@ const getWeekWeatherAsync = async () => {
   weekWeather = res.data;
 }
 
-const initEcharts=async ()=>{
-  const myChart= echarts.init(document.getElementById('chart-1')!);
+const initEcharts = async () => {
+  const myChart = echarts.init(document.getElementById('chart-1')!);
   // await getWeekWeatherAsync();
-  option.xAxis.data=weekWeather.map((e:any)=>e.date);
-  option.series[0].data=weekWeather.map((e:any)=>e.temp.split('~')[1].slice(0,-1));
-  option.series[1].data=weekWeather.map((e:any)=>e.temp.split('~')[0]);
+  option.xAxis.data = weekWeather.map((e: any) => e.date);
+  option.series[0].data = weekWeather.map((e: any) => e.temp.split('~')[1].slice(0, -1));
+  option.series[1].data = weekWeather.map((e: any) => e.temp.split('~')[0]);
   myChart.setOption(option);
 }
-const showWeekData=()=>{
+const showWeekData = () => {
   initEcharts();
 }
-//定位
-const city = ref('成都');
+//动画列表
+let anime: any = reactive({});
+// const baseURL=ref('');
+const getAllAnimeAsync = async () => {
+  const res = await getAllAnime();
+  for (const key in res.data) {
+    anime[key] = res.data[key];
+  }
+  // console.log(anime);
+}
+//音乐列表
+let OMMusic: any = reactive({});
+const music=ref('');
+// const baseURL=ref('');
+const getOMMusicAsync = async () => {
+  const res = await getTopSong();
+  for (const key in res.data) {
+    OMMusic[key] = res.data[key];
+  }
+  const res2=await getMusic(res.data[0].id);
+  music.value=res2.data[0].url;
+  // console.log(OMMusic);
+}
 //生命周期
 const created = () => {
   getTime();
   // console.log(weather);
   getWeatherAsync();
   getWeekWeatherAsync();
+  getAllAnimeAsync();
+  getOMMusicAsync();
 }
 created();
-onMounted(()=>{
+onMounted(() => {
   // const timer2=setTimeout(()=>{
   //   // initEcharts();
   //   // clearTimeout(timer2);
@@ -263,6 +280,8 @@ onUnmounted(() => {
 
 #homePage {
   width: 100%;
+  height: auto;
+  padding-bottom: 20px;
 }
 
 .row {
@@ -417,6 +436,8 @@ onUnmounted(() => {
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
+    overflow: auto;
+    @include scrollBar();
 
     .title {
       font-size: 25px;
@@ -431,14 +452,14 @@ onUnmounted(() => {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    justify-content: space-evenly;
+    // justify-content: space-evenly;
     align-items: flex-start;
     box-sizing: border-box;
 
     .gameItem {
       width: 80px;
       height: 80px;
-      margin: 5px;
+      margin: 5px 10px;
       flex-direction: column;
       background-color: #fbe7b5;
       cursor: pointer;
@@ -458,8 +479,51 @@ onUnmounted(() => {
   }
 
   .calendar {
-    overflow: scroll;
+    overflow: auto;
     @include scrollBar();
+  }
+
+  .anime {
+    .el-tabs{
+      height: 100%;
+      overflow:auto;
+      background-image: url(@/assets/webp/yinghua.webp);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+      @include scrollBar();
+    }
+    // .el-tabs__content{
+    //   overflow: auto;
+    // }
+    // ul{
+    //   height: 100%;
+    // }
+    li {
+      display: flex;
+      font-size: 14px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      a {
+        font-weight: bold;
+        color: black;
+        text-decoration: none;
+        &:hover{
+          color: white;
+          text-shadow: 0px 0px 3px black;
+        }
+        &:nth-child(1){
+          flex: 6 1;
+        }
+        &:nth-child(2){
+          display: flex;
+          justify-content: flex-end;
+          align-items: flex-end;
+          flex: 1 0;
+        }
+      }
+    }
   }
 }
 
@@ -488,7 +552,8 @@ onUnmounted(() => {
       @include border();
     }
   }
-  .chart-1{
+
+  .chart-1 {
     margin: 20px;
   }
 }

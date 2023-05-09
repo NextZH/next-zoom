@@ -2,12 +2,12 @@ import router from "@/router";
 import axios from "axios";
 // import { MessageBox } from "element-plus";
 
-axios.defaults.baseURL = "http://127.0.0.1:9527"
+// axios.defaults.baseURL = "http://127.0.0.1:9527"
 
 axios.interceptors.request.use((config) => {
     config.headers.Authorization = localStorage.token;
     return config;
-},err=>{
+}, err => {
     console.log(err);
 })
 
@@ -25,3 +25,24 @@ axios.interceptors.response.use(res => res.data, err => {
     // }
     return Promise.reject(err.message);
 });
+
+export const http = (param) => {
+    return new Promise((resolve, reject) => {
+        const baseIP = 'http://127.0.0.1';
+        const config = {
+            baseURL: 'http://127.0.0.1:9527',
+            url: param.url,
+            method: param.method,
+            headers: { ...param.headers },
+        };
+        if (param.method.toLowerCase() == 'get') {
+            config.params = param.data;
+        } else {
+            config.data = param.data;
+        }
+        if (param.port) {
+            config.baseURL = baseIP + ':' + param.port;
+        }
+        axios(config).then(res =>resolve(res)).catch(err=>reject(err))
+    })
+}
