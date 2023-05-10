@@ -29,8 +29,8 @@
               </span>
               <el-popover placement="right" title="未来一周天气" :width="900" trigger="click" @show="showWeekData">
                 <template #reference>
-                  <span class="btn" v-if="!weatherLoading">
-                    未来一周天气>>
+                  <span class="btn">
+                    {{ weekWeatherLoading ? '' : '未来一周天气>>' }}
                   </span>
                 </template>
                 <template #default>
@@ -129,15 +129,42 @@
           <el-tab-pane :label="anime.tagList[i]" v-for="list, i in anime.dataList" :key="i">
             <ul>
               <li v-for="item in list">
-                <span><a :href="anime.baseURL + item.nameUrl">{{ item.name }}</a></span>
-                <span><a :href="anime.baseURL + item.numUrl">{{ item.num }}</a></span>
+                <span><a :href="anime.baseURL + item.nameUrl" target="_blank">{{ item.name }}</a></span>
+                <span><a :href="anime.baseURL + item.numUrl" target="_blank">{{ item.num }}</a></span>
               </li>
             </ul>
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div class="row-center" v-if="style[2].center.show">
-        <audio :src="music" controls></audio>
+      <div class="row-center music" v-if="style[2].center.show">
+        <template v-if="music.list.length > 0">
+          <Carousel :list="Imglist" :height="'200px'" :is-card="true" :indicatorPosition="'none'" :autoplay="false"
+            :initial-index="musicIndex" :arrow="'always'" :style="{ btnBgColor: 'white', btnColor: 'black' }"
+            :change="musicChange"></Carousel>
+          <el-tooltip class="box-item" effect="dark" :content="music.list && music.list[musicIndex]?.name"
+            placement="top">
+            <div class="song">{{ music.list && music.list[musicIndex]?.name }}</div>
+          </el-tooltip>
+          <el-tooltip class="box-item" effect="dark" :content="music.list && music.list[musicIndex]?.artists.map((e:any)=>e.name).join(',')"
+            placement="top">
+            <div class="artists">
+              作者：
+              <span v-for="item in music.list && music.list[musicIndex]?.artists">{{ item.name }}</span>
+            </div>
+          </el-tooltip>
+          <el-tooltip class="box-item" effect="dark" :content="lyric"
+            placement="top">
+            <div class="lyric">
+              {{ lyric }}
+            </div>
+          </el-tooltip>
+          <audio :src="music.currentMusic.url" controls style="width: 100%;" :autoplay="autoplay" @play="audioPlay" @pause="audioPause" @ended="audioEnded" @seeked="autoSeeked" @loadstart="loadstart" ></audio>
+        </template>
+        <template v-else>
+          <div class="empty">
+            音乐插件已关闭
+          </div>
+        </template>
       </div>
       <div class="row-right" v-if="style[2].right.show">
       </div>
@@ -154,7 +181,7 @@ import menu from '@/constant/menu';
 import * as echarts from 'echarts';
 import { option, style, list } from './constant';
 import { getWeather, getWeekWeather, getAllAnime } from '@/api/home';
-import { getMusic,getTopSong } from '@/api/wangyiyun';
+import { getMusic, getTopSong, getLyric } from '@/api/wangyiyun';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
 const themeStore = useThemeStore();
@@ -214,10 +241,13 @@ const getWeatherAsync = async () => {
 }
 //一周天气
 let weekWeather: any = reactive([]);
+const weekWeatherLoading = ref(false);
 const getWeekWeatherAsync = async () => {
+  weekWeatherLoading.value = true;
   const res = await getWeekWeather();
   // console.log(res);
   weekWeather = res.data;
+  weekWeatherLoading.value = false;
 }
 
 const initEcharts = async () => {
@@ -241,20 +271,103 @@ const getAllAnimeAsync = async () => {
   }
   // console.log(anime);
 }
+/* 音乐播放器相关 */
 //音乐列表
-let OMMusic: any = reactive({});
-const music=ref('');
-// const baseURL=ref('');
+let music: any = reactive({
+  list: [],
+  musicImg: [],
+  currentMusic: {},
+  lyric: '',
+});
+const musicIndex = ref(0);
+const ImglistSize = ref(5);
+const autoplay = ref(false);
+const lyricIndex = ref(0);
+const lyric = computed(() => music.lyric.split('\n')[lyricIndex.value]);
+const Imglist = computed(() => music.musicImg.filter((e: any, i: number) => i < ImglistSize.value));//初始只显示ImglistSize=5页，避免一次性请求完卡死
 const getOMMusicAsync = async () => {
   const res = await getTopSong();
-  for (const key in res.data) {
-    OMMusic[key] = res.data[key];
-  }
-  const res2=await getMusic(res.data[0].id);
-  music.value=res2.data[0].url;
-  // console.log(OMMusic);
+  music.list = res.data;
+  music.musicImg = res.data.map((e: any) => e.album.blurPicUrl);
+  musicChange(0);
 }
-//生命周期
+//当前播放的位置
+const currentTime=ref(0);
+//歌词定时器
+const lyricTimer=ref(0);
+//歌词播放时段记录
+const lyricTotal=ref(0);
+//自动播放歌词
+const playLyric = () => {
+  // console.log(index);
+  lyricTimer.value = setInterval(() => {
+    // console.log(lyricTotal.value);
+    let m = Math.floor(lyricTotal.value / 6000);
+    let s = Math.floor(lyricTotal.value / 100)-m*60;
+    let ms = lyricTotal.value % 100;
+    const arr = music.lyric.split('\n').map((e: any) => e.slice(1, 9));
+    const time = `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}.${ms < 10 ? '0' + ms : ms}`;
+    const index = arr.indexOf(time);
+    // console.log(time,index);
+    // if(m>0){
+    //   console.log(time,index);
+    // }
+    if (index != -1) {
+      if (index != lyricIndex.value) {
+        lyricIndex.value = index;
+      }
+    }
+    lyricTotal.value++;
+    if (lyricIndex.value == arr.length - 1) {
+      lyricTotal.value=0;
+      clearInterval(lyricTimer.value);
+    }
+  }, 10);
+}
+//暂停歌词
+const PauseLyric=()=>{
+  clearInterval(lyricTimer.value);
+}
+const musicChange = async (index: number) => {
+  musicIndex.value = index;
+  ImglistSize.value - index < 2 && ImglistSize.value++;
+  // console.log(index,Imglist);
+  const res = await getMusic(music.list[index].id);
+  music.currentMusic = res.data[0];
+  const res2 = await getLyric(music.list[index].id);
+  music.lyric = res2.lrc.lyric;
+  autoplay.value = true;
+}
+//播放
+const audioPlay=(value:any)=>{
+  // console.log(value);
+  playLyric();
+}
+//暂停
+const audioPause=(value:any)=>{
+  // console.log(value);
+  PauseLyric();
+}
+//结束
+const audioEnded=(value:any)=>{
+  // console.log(value);
+  lyricTotal.value=0;
+  PauseLyric();
+}
+//加载新资源
+const loadstart=(value:any)=>{
+  // console.log(value);
+  lyricTotal.value=0;
+  PauseLyric();
+}
+//跳转到指定时间点位置播放
+const autoSeeked=(e:any)=>{
+  // console.log(e.target.currentTime,lyricTotal.value);
+  lyricTotal.value=e.target.currentTime.toFixed(2)*100;
+  // console.log(e.target.currentTime,lyricTotal.value);
+}
+
+/* 生命周期 */
 const created = () => {
   getTime();
   // console.log(weather);
@@ -484,15 +597,16 @@ onUnmounted(() => {
   }
 
   .anime {
-    .el-tabs{
+    .el-tabs {
       height: 100%;
-      overflow:auto;
+      overflow: auto;
       background-image: url(@/assets/webp/yinghua.webp);
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
       @include scrollBar();
     }
+
     // .el-tabs__content{
     //   overflow: auto;
     // }
@@ -509,14 +623,17 @@ onUnmounted(() => {
         font-weight: bold;
         color: black;
         text-decoration: none;
-        &:hover{
+
+        &:hover {
           color: white;
           text-shadow: 0px 0px 3px black;
         }
-        &:nth-child(1){
+
+        &:nth-child(1) {
           flex: 6 1;
         }
-        &:nth-child(2){
+
+        &:nth-child(2) {
           display: flex;
           justify-content: flex-end;
           align-items: flex-end;
@@ -524,6 +641,44 @@ onUnmounted(() => {
         }
       }
     }
+  }
+
+  .music {
+    // display: flex;
+    // flex-direction: column;
+    color: #409EFF;
+    font-size: 14px;
+
+    .song {
+      font-size: 20px;
+    }
+
+    // .lyric{
+    //   height: 20px;
+    // }
+    audio{
+      margin-top: 14px;
+    }
+    .song,
+    .lyric,
+    .artists {
+      margin: 5px 10px;
+      /* 多余文本用...代替 */
+      /* 溢出隐藏 */
+      overflow: hidden;
+      /* 设置伸缩盒子 */
+      display: -webkit-box;
+      /* 设置子元素的对齐方式 */
+      -webkit-box-orient: vertical;
+      /* 设置显示想行数 */
+      -webkit-line-clamp: 1;
+    }
+  }
+
+  .empty {
+    height: 100%;
+    font-size: 30px;
+    @include f-c-c();
   }
 }
 
@@ -537,6 +692,7 @@ onUnmounted(() => {
 
 .el-popover {
   box-sizing: border-box;
+
   .list {
     display: flex;
     justify-content: space-evenly;

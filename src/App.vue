@@ -43,7 +43,7 @@
           @change="chnageParticleObj" />
       </template>
     </Drawer>
-    
+    <el-backtop :right="50" :bottom="100" :visibility-height="100" target=".el-main" />
   </div>
 </template>
 
