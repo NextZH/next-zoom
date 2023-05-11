@@ -155,6 +155,7 @@ const clickCard = (item: cardType) => {
 .el-footer,
 .el-main {
   @include f-c-c;
+  @include scrollBar();
 }
 
 // .el-footer{

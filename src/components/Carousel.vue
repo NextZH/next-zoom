@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-carousel :interval="props.interval" :type="props.isCard ? 'card' : ''" :height="props.height" :initial-index="props.initialIndex"
-      :autoplay="props.autoplay" :indicator-position="props.indicatorPosition" :arrow="props.arrow" :style="{'--btnBgColor':props.style.btnBgColor,'--btnColor':props.style.btnColor}" @change="props.change">
+      :autoplay="props.autoplay" :indicator-position="props.indicatorPosition" :arrow="props.arrow" :style="{'--btnBgColor':props.style.btnBgColor,'--btnColor':props.style.btnColor}" @change="props.change" ref="carousel">
       <el-carousel-item v-for="item in props.list" :key="item">
         <h3 v-if="typeof item == 'number'" text="2xl" justify="center">{{ item }}</h3>
         <template v-else>
@@ -18,6 +18,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 interface PropsType {
   isCard?: boolean,
   interval?: number,
@@ -47,6 +48,15 @@ const props = withDefaults(defineProps<PropsType>(), {
   }),
   change:()=>(index:number,prevIndex:number)=>{}
 });
+
+const carousel:any=ref(null);
+
+const setActiveItem=(index:number)=>{
+  carousel.value.setActiveItem(index);
+}
+defineExpose({
+  setActiveItem,
+})
 
 </script>
 

@@ -1,6 +1,75 @@
 <template>
   <div class="common-layout">
     <!-- <canvas id="canvas"></canvas> -->
+    <div class="musicDetail" :class="{ detailFade: !showDetail }">
+      <div class="leaveBtn" @click="triggerDetail(false)">
+        <el-icon><ArrowDownBold /></el-icon>
+      </div>
+      <div class="content">
+        <img :src="Imglist[musicIndex]" alt="">
+        <div class="lyricList">
+          <div class="title">
+            <div class="song">{{ music.list && music.list[musicIndex]?.name }}</div>
+            <div>
+              歌手：
+              <span v-for="item in music.list && music.list[musicIndex]?.artists">{{ item.name }}</span>
+            </div>
+          </div>
+          <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+            <li v-for="i,index in lyricList" :key="index" class="infinite-list-item">{{ i }}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="detailBackground" :style="{ backgroundImage: `url(${Imglist[musicIndex]})` }"></div>
+    </div>
+    <div class="music" :class="{ fade: !showMusic }">
+      <div class="musicImg" @mouseenter="triggerHoverBtn(true)" @mouseleave="triggerHoverBtn(false)">
+        <div class="hoverBtn" v-if="hoverBtn" @click="triggerDetail()">
+          <el-icon>
+            <Top v-if="!showDetail" />
+            <Bottom v-else />
+          </el-icon>
+        </div>
+        <img :src="Imglist[musicIndex]" alt="">
+      </div>
+      <div class="musicInfo">
+        <el-tooltip class="box-item" effect="dark" :content="music.list && music.list[musicIndex]?.name" placement="top">
+          <div class="song">{{ music.list && music.list[musicIndex]?.name }}</div>
+        </el-tooltip>
+        <el-tooltip class="box-item" effect="dark"
+          :content="music.list && music.list[musicIndex]?.artists.map((e: any) => e.name).join(',')" placement="top">
+          <div class="artists">
+            歌手：
+            <span v-for="item in music.list && music.list[musicIndex]?.artists">{{ item.name }}</span>
+          </div>
+        </el-tooltip>
+        <el-tooltip class="box-item" effect="dark" :content="lyric" placement="top">
+          <div class="lyric">
+            {{ lyric }}
+          </div>
+        </el-tooltip>
+      </div>
+      <div class="audioBtn">
+        <el-tooltip class="box-item" effect="dark" content="上一首" placement="top">
+          <el-button type="primary" size="large" :icon="DArrowLeft" circle @click="turnMusic(false)" />
+        </el-tooltip>
+        <el-tooltip class="box-item" effect="dark" content="下一首" placement="top">
+          <el-button type="primary" size="large" :icon="DArrowRight" circle @click="turnMusic(true)" />
+        </el-tooltip>
+      </div>
+      <audio ref="musicAudio" :src="music.currentMusic.url" controls style="width: 100%;" :autoplay="autoplay"
+        @play="audioPlay" @pause="audioPause" @ended="audioEnded" @seeked="autoSeeked" @loadstart="loadstart"
+        @loadedmetadata="loadedmetadata"></audio>
+    </div>
+    <el-tooltip class="box-item" effect="dark" content="音乐" placement="left">
+      <div class="musicBtn" @click="triggerMusicBox">
+        <!-- 打开 -->
+        <el-icon>
+          <Headset />
+        </el-icon>
+      </div>
+    </el-tooltip>
+
     <div class="circleBox" v-if="showCircle">
       <div class="circle" v-for="item in circleBox" :key="item.id"
         :style="{ backgroundColor: item.show ? `rgba(${item.red},${item.green},${item.blue},${item.alpha})` : 'rgba(0,0,0,0)', 'transition-duration': `${item.show ? 0 : 1}s`, 'transform': item.show ? 'rotate(1,1)' : 'rotate(0.5,0.5)' }"
@@ -8,8 +77,8 @@
     </div>
     <el-container class="container">
       <el-header>
-        <HeaderPage v-model:isCollapse="isCollapse" v-model:showCircle="showCircle" v-model:showClick="showClick" v-model:showBackground="showBackground"
-          @changeSetShowClickFlag="changeSetShowClickFlag"></HeaderPage>
+        <HeaderPage v-model:isCollapse="isCollapse" v-model:showCircle="showCircle" v-model:showClick="showClick"
+          v-model:showBackground="showBackground" @changeSetShowClickFlag="changeSetShowClickFlag"></HeaderPage>
       </el-header>
       <el-container class="container-2">
         <el-aside>
@@ -32,37 +101,90 @@
         <el-slider v-model="particle.radius" range :min="0" :max="30" :step="0.1" show-input :marks="marks"
           @change="chnageParticleObj" />
         <div class="title">粒子数量范围:</div>
-        <el-slider v-model="particle.number" range :min="0" :max="30" :step="0.1" show-input :marks="marks" @change="chnageParticleObj" />
+        <el-slider v-model="particle.number" range :min="0" :max="30" :step="0.1" show-input :marks="marks"
+          @change="chnageParticleObj" />
         <div class="title">粒子爆炸速度范围:</div>
-        <el-slider v-model="particle.speed" range :min="0" :max="30" :step="0.1" show-input :marks="marks" @change="chnageParticleObj" />
+        <el-slider v-model="particle.speed" range :min="0" :max="30" :step="0.1" show-input :marks="marks"
+          @change="chnageParticleObj" />
         <div class="title">水波纹圈半径范围:</div>
         <el-slider v-model="particle.waterRadius" range :min="0" :max="30" :step="0.1" show-input :marks="marks"
           @change="chnageParticleObj" />
         <div class="title">水波纹圈完整度:</div>
-        <el-slider v-model="particle.integrity" range :min="0" :max="1" :step="0.01" show-input :marks="marks2" 
+        <el-slider v-model="particle.integrity" range :min="0" :max="1" :step="0.01" show-input :marks="marks2"
           @change="chnageParticleObj" />
       </template>
     </Drawer>
-    <el-backtop :right="50" :bottom="100" :visibility-height="100" target=".el-main" />
+    <el-backtop :right="50" :bottom="150" :visibility-height="100" target=".el-main" />
   </div>
 </template>
 
 <script setup lang="ts">
 import NavPage from './views/NavPage.vue';
 import HeaderPage from './views/HeaderPage.vue';
-import { ref, reactive, watch,onMounted } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
 import _ from 'lodash';
-import { triggerAnime, setAnimeData,particleObj } from './animation/js/click1.js';
-import { initBackground,triggerBackground } from './animation/js/background.js';
+import { triggerAnime, setAnimeData, particleObj } from './animation/js/click1.js';
+import { initBackground, triggerBackground } from './animation/js/background.js';
 import Drawer from './components/Drawer.vue';
-onMounted(()=>{
+import { Headset, DArrowRight, DArrowLeft, Top,Bottom,ArrowDownBold } from '@element-plus/icons-vue'
+import { useMusicStore } from '@/stores/Music';
+import { storeToRefs } from 'pinia';
+const musicStore = useMusicStore();
+const { audioPlay, audioPause, audioEnded, autoSeeked, loadstart, getMusicAsync, musicChange, loadedmetadata } = musicStore;
+const { music, autoplay, musicIndex, lyric, Imglist, musicAudio, audioCurrentTime,lyricList,lyricListHasTime } = storeToRefs(musicStore);
+onMounted(() => {
   // initBackground();
   triggerBackground(false);
 })
-const showBackground=ref(false);
-watch(showBackground,()=>{
+const showBackground = ref(false);
+watch(showBackground, () => {
   triggerBackground(showBackground.value)
 })
+//音乐主控制台实例
+// const musicAudio:any=ref(null);
+//展示音乐主控制台标志
+const showMusic = ref(false);
+//打开音乐主控制台
+const triggerMusicBox = () => {
+  showMusic.value = !showMusic.value;
+}
+//切歌
+const turnMusic = (flag: boolean) => {
+  if (flag) {
+    if (musicIndex.value == Imglist.value.length - 1) {
+      musicIndex.value = 0;
+    } else {
+      musicIndex.value++;
+    }
+    musicChange(musicIndex.value);
+  } else {
+    if (musicIndex.value == 0) {
+      musicIndex.value = Imglist.value.length - 1;
+    } else {
+      musicIndex.value--;
+    }
+
+    musicChange(musicIndex.value);
+  }
+}
+const hoverBtn = ref(false);
+const triggerHoverBtn = (flag: boolean) => {
+  hoverBtn.value = flag;
+}
+
+const showDetail = ref(false);
+const triggerDetail = (flag?:boolean) => {
+  if (flag) {
+    showDetail.value=flag;
+  }else{
+    showDetail.value = !showDetail.value;
+  }
+}
+
+const count = ref(0)
+const load = () => {
+  count.value += 2
+}
 
 const isCollapse = ref(false);
 
@@ -85,8 +207,8 @@ const marks2 = reactive({
   0: '0',
   1: '1',
 })
-const formatTooltip=(value:any)=>{
-  return value/10;
+const formatTooltip = (value: any) => {
+  return value / 10;
 }
 const chnageParticleObj = () => {
   setAnimeData(particle)
@@ -143,10 +265,11 @@ const moveLeave = (item: any) => {
               ヾ(≧▽≦*)o         made by Next         (o゜▽゜)o☆
                                 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
   `);
+  getMusicAsync();
 })()
 </script>
 
-<style lang="scss" >
+<style lang="scss" scoped>
 @import "./assets/mixins.scss";
 
 .common-layout {
@@ -154,6 +277,236 @@ const moveLeave = (item: any) => {
   position: relative;
   overflow: hidden;
   // background-color: black;
+}
+
+.musicDetail {
+  position: fixed;
+  z-index: 99;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: white;
+  transition: 0.5s;
+  .leaveBtn{
+    position: absolute;
+    // width: 60px;
+    // height: 60px;
+    // background-color: pink;
+    left: 40px;
+    top: 30px;
+    z-index: 2;
+    color: white;
+    text-shadow: 0px 0px 5px black;
+    font-size: 40px;
+    cursor: pointer;
+    transition: 0.3s;
+    &:hover{
+      color: #409EFF;
+    }
+  }
+
+  .content {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 50px 300px;
+    @include f-c-c;
+
+    img {
+      flex: 1 0;
+      border-radius: 5px;
+      height: 300px;
+      width: 300px;
+      box-shadow: 0px 0px 5px 1px black;
+    }
+
+    .lyricList {
+      flex: 4 0;
+      color: white;
+      text-shadow: 0px 0px 5px black;
+      .title{
+        font-weight: bold;
+        margin-bottom: 50px;
+        @include f-c-c;
+        .song{
+          margin-right: 20px;
+          font-size: 30px;
+        }
+      }
+
+      .infinite-list {
+        height: 500px;
+        padding: 0;
+        margin: 0;
+        margin-bottom: 50px;
+        list-style: none;
+
+        &::-webkit-scrollBar {
+          display: none;
+        }
+
+        @include scrollBar;
+      }
+
+      .infinite-list .infinite-list-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        height: 50px;
+        margin: 10px;
+        box-sizing: border-box;
+        padding: 0 40px;
+      }
+
+      .infinite-list .infinite-list-item+.list-item {
+        margin-top: 10px;
+      }
+    }
+  }
+
+  .detailBackground {
+    transition: 0.5s;
+    width: 100%;
+    height: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    // -webkit-filter: blur(5px);
+    // -moz-filter: blur(5px);
+    // -o-filter: blur(5px);
+    filter: blur(50px);
+  }
+
+}
+
+.music {
+  position: fixed;
+  z-index: 100;
+  height: 100px;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  box-shadow: 0px -1px 10px 1px black;
+  transition: 0.5s;
+  display: flex;
+  align-items: center;
+  color: #409EFF;
+  font-size: 14px;
+
+  .song {
+    font-size: 20px;
+  }
+
+  // .lyric{
+  //   height: 20px;
+  // }
+  // audio {
+  //   margin-top: 20px;
+  // }
+
+  .song,
+  .lyric,
+  .artists {
+    margin: 5px 10px;
+    /* 多余文本用...代替 */
+    /* 溢出隐藏 */
+    overflow: hidden;
+    /* 设置伸缩盒子 */
+    display: -webkit-box;
+    /* 设置子元素的对齐方式 */
+    -webkit-box-orient: vertical;
+    /* 设置显示想行数 */
+    -webkit-line-clamp: 1;
+  }
+
+  .musicImg {
+    position: relative;
+    border-radius: 5px;
+    // overflow: hidden;
+    height: 80px;
+    width: 80px;
+
+    .hoverBtn {
+      border-radius: 5px;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      cursor: pointer;
+      z-index: 2;
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+      // opacity: 0.5;
+      @include f-c-c();
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    img {
+      border-radius: 5px;
+      height: 80px;
+      width: 80px;
+    }
+  }
+
+  .musicInfo {
+    width: 400px;
+  }
+
+  .audioBtn {
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.fade {
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  transform: translateY(100px);
+}
+
+.detailFade {
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  transform: translateY(100vh);
+  .detailBackground{
+    filter: blur(0px);
+  }
+}
+
+.musicBtn {
+  font-size: 14px;
+  font-weight: bold;
+  position: fixed;
+  z-index: 98;
+  right: 50px;
+  bottom: 200px;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  color: #409EFF;
+  border-radius: 50%;
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  @include f-c-c();
+
+  &:hover {
+    transition: 0.5s;
+    background-color: #409EFF;
+    color: white;
+  }
 }
 
 .circleBox {
@@ -223,9 +576,9 @@ const moveLeave = (item: any) => {
 //   @include scrollBar();
 // }
 
-.mydrawer{
-  .content{
-    .title{
+.mydrawer {
+  .content {
+    .title {
       margin: 20px 0 10px;
     }
   }

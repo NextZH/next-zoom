@@ -138,27 +138,35 @@
       </div>
       <div class="row-center music" v-if="style[2].center.show">
         <template v-if="music.list.length > 0">
-          <Carousel :list="Imglist" :height="'200px'" :is-card="true" :indicatorPosition="'none'" :autoplay="false"
-            :initial-index="musicIndex" :arrow="'always'" :style="{ btnBgColor: 'white', btnColor: 'black' }"
-            :change="musicChange"></Carousel>
+          <Carousel ref="musicCarousel" :list="Imglist" :height="'200px'" :is-card="true" :indicatorPosition="'none'"
+            :autoplay="false" :initial-index="musicIndex" :arrow="'always'"
+            :style="{ btnBgColor: 'white', btnColor: 'black' }" :change="turnMusic"></Carousel>
           <el-tooltip class="box-item" effect="dark" :content="music.list && music.list[musicIndex]?.name"
             placement="top">
             <div class="song">{{ music.list && music.list[musicIndex]?.name }}</div>
           </el-tooltip>
-          <el-tooltip class="box-item" effect="dark" :content="music.list && music.list[musicIndex]?.artists.map((e:any)=>e.name).join(',')"
-            placement="top">
+          <el-tooltip class="box-item" effect="dark"
+            :content="music.list && music.list[musicIndex]?.artists.map((e: any) => e.name).join(',')" placement="top">
             <div class="artists">
-              作者：
+              歌手：
               <span v-for="item in music.list && music.list[musicIndex]?.artists">{{ item.name }}</span>
             </div>
           </el-tooltip>
-          <el-tooltip class="box-item" effect="dark" :content="lyric"
-            placement="top">
+          <el-tooltip class="box-item" effect="dark" :content="lyric" placement="top">
             <div class="lyric">
               {{ lyric }}
             </div>
           </el-tooltip>
-          <audio :src="music.currentMusic.url" controls style="width: 100%;" :autoplay="autoplay" @play="audioPlay" @pause="audioPause" @ended="audioEnded" @seeked="autoSeeked" @loadstart="loadstart" ></audio>
+          <div class="controller">
+            <el-button type="primary" size="large" circle @click="playMusic">
+              <el-icon :size="40">
+                <VideoPause v-if="playFlag" />
+                <VideoPlay v-else />
+              </el-icon>
+            </el-button>
+            <el-slider v-model="currentTime" disabled :max="duration" :marks="marks" :format-tooltip="formatTooltip" :step="0.01" @change="sliderChange" />
+          </div>
+          <!-- <audio :src="music.currentMusic.url" controls style="width: 100%;" :autoplay="autoplay" @play="audioPlay" @pause="audioPause" @ended="audioEnded" @seeked="autoSeeked" @loadstart="loadstart" ></audio> -->
         </template>
         <template v-else>
           <div class="empty">
@@ -175,15 +183,62 @@
 
 <script setup lang="ts">
 import Carousel from '@/components/Carousel.vue';
-import { ref, reactive, computed, onUnmounted, onMounted } from 'vue';
+import { ref, reactive, computed, onUnmounted, onMounted, watch } from 'vue';
 import moment from 'moment';
 import menu from '@/constant/menu';
 import * as echarts from 'echarts';
 import { option, style, list } from './constant';
 import { getWeather, getWeekWeather, getAllAnime } from '@/api/home';
-import { getMusic, getTopSong, getLyric } from '@/api/wangyiyun';
+import { VideoPlay, VideoPause } from '@element-plus/icons-vue';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
+import { useMusicStore } from '@/stores/Music';
+const musicStore = useMusicStore();
+const { musicChange } = musicStore;
+const { music, musicIndex, lyric, Imglist, musicAudio, duration,currentTime,playFlag } = storeToRefs(musicStore);
+//音乐播放切换器实例
+const musicCarousel = ref('musicCarousel');
+//手动切换封面等
+watch(musicIndex, (value) => {
+  // console.log(value);
+  (musicCarousel.value as any).setActiveItem(value);
+})
+//播放暂停音乐
+const playMusic = () => {
+  playFlag.value = !playFlag.value;
+  if (playFlag.value) {
+    (musicAudio.value as any).play();
+  } else {
+    (musicAudio.value as any).pause();
+  }
+}
+//切歌
+const turnMusic = (index: number) => {
+  playFlag.value = true;
+  musicChange(index);
+}
+//进度条首尾长度显示
+const marks=computed(()=>({
+  0:'00:00.00',
+  [duration.value]:formatTooltip(duration.value)
+}));
+//进度条显示格式化
+const formatTooltip = (value: any) => {
+  const time = value.toFixed(0);
+  let m = Math.floor(time / 6000);
+  let s = Math.floor(time / 100) - m * 60;
+  let ms = time % 100;
+  // console.log(value);
+  return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}.${ms < 10 ? '0' + ms : ms}`;
+}
+//进度条改变
+const sliderChange=(value:any)=>{
+  console.log('前', value,(musicAudio.value as any).currentTime);
+  // currentTime.value=value;
+  (musicAudio.value as any).currentTime=(value/100).toFixed(6);
+  console.log('后', value,(musicAudio.value as any).currentTime);
+}
+//主题
 const themeStore = useThemeStore();
 const { buttonType, buttonColor } = storeToRefs(themeStore);
 
@@ -271,101 +326,6 @@ const getAllAnimeAsync = async () => {
   }
   // console.log(anime);
 }
-/* 音乐播放器相关 */
-//音乐列表
-let music: any = reactive({
-  list: [],
-  musicImg: [],
-  currentMusic: {},
-  lyric: '',
-});
-const musicIndex = ref(0);
-const ImglistSize = ref(5);
-const autoplay = ref(false);
-const lyricIndex = ref(0);
-const lyric = computed(() => music.lyric.split('\n')[lyricIndex.value]);
-const Imglist = computed(() => music.musicImg.filter((e: any, i: number) => i < ImglistSize.value));//初始只显示ImglistSize=5页，避免一次性请求完卡死
-const getOMMusicAsync = async () => {
-  const res = await getTopSong();
-  music.list = res.data;
-  music.musicImg = res.data.map((e: any) => e.album.blurPicUrl);
-  musicChange(0);
-}
-//当前播放的位置
-const currentTime=ref(0);
-//歌词定时器
-const lyricTimer=ref(0);
-//歌词播放时段记录
-const lyricTotal=ref(0);
-//自动播放歌词
-const playLyric = () => {
-  // console.log(index);
-  lyricTimer.value = setInterval(() => {
-    // console.log(lyricTotal.value);
-    let m = Math.floor(lyricTotal.value / 6000);
-    let s = Math.floor(lyricTotal.value / 100)-m*60;
-    let ms = lyricTotal.value % 100;
-    const arr = music.lyric.split('\n').map((e: any) => e.slice(1, 9));
-    const time = `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}.${ms < 10 ? '0' + ms : ms}`;
-    const index = arr.indexOf(time);
-    // console.log(time,index);
-    // if(m>0){
-    //   console.log(time,index);
-    // }
-    if (index != -1) {
-      if (index != lyricIndex.value) {
-        lyricIndex.value = index;
-      }
-    }
-    lyricTotal.value++;
-    if (lyricIndex.value == arr.length - 1) {
-      lyricTotal.value=0;
-      clearInterval(lyricTimer.value);
-    }
-  }, 10);
-}
-//暂停歌词
-const PauseLyric=()=>{
-  clearInterval(lyricTimer.value);
-}
-const musicChange = async (index: number) => {
-  musicIndex.value = index;
-  ImglistSize.value - index < 2 && ImglistSize.value++;
-  // console.log(index,Imglist);
-  const res = await getMusic(music.list[index].id);
-  music.currentMusic = res.data[0];
-  const res2 = await getLyric(music.list[index].id);
-  music.lyric = res2.lrc.lyric;
-  autoplay.value = true;
-}
-//播放
-const audioPlay=(value:any)=>{
-  // console.log(value);
-  playLyric();
-}
-//暂停
-const audioPause=(value:any)=>{
-  // console.log(value);
-  PauseLyric();
-}
-//结束
-const audioEnded=(value:any)=>{
-  // console.log(value);
-  lyricTotal.value=0;
-  PauseLyric();
-}
-//加载新资源
-const loadstart=(value:any)=>{
-  // console.log(value);
-  lyricTotal.value=0;
-  PauseLyric();
-}
-//跳转到指定时间点位置播放
-const autoSeeked=(e:any)=>{
-  // console.log(e.target.currentTime,lyricTotal.value);
-  lyricTotal.value=e.target.currentTime.toFixed(2)*100;
-  // console.log(e.target.currentTime,lyricTotal.value);
-}
 
 /* 生命周期 */
 const created = () => {
@@ -374,7 +334,7 @@ const created = () => {
   getWeatherAsync();
   getWeekWeatherAsync();
   getAllAnimeAsync();
-  getOMMusicAsync();
+  // getOMMusicAsync();
 }
 created();
 onMounted(() => {
@@ -382,6 +342,13 @@ onMounted(() => {
   //   // initEcharts();
   //   // clearTimeout(timer2);
   // },1000)
+
+  if ((musicAudio.value as any).played) {
+    playFlag.value = (musicAudio.value as any).played;
+  }
+  if ((musicAudio.value as any).paused) {
+    playFlag.value = !(musicAudio.value as any).paused;
+  }
 })
 onUnmounted(() => {
   clearInterval(timer.value);
@@ -395,9 +362,12 @@ onUnmounted(() => {
   width: 100%;
   height: auto;
   padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .row {
+  flex-shrink: 0;
   $height: var(--height);
   $left: var(--left);
   // $cneter: var(--cneter);
@@ -656,9 +626,20 @@ onUnmounted(() => {
     // .lyric{
     //   height: 20px;
     // }
-    audio{
+    audio {
       margin-top: 14px;
     }
+
+    .controller {
+      margin: 5px 10px;
+      display: flex;
+      align-items: center;
+
+      .el-slider {
+        margin: 0 40px;
+      }
+    }
+
     .song,
     .lyric,
     .artists {
