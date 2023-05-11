@@ -11,17 +11,23 @@
         <img :src="Imglist[musicIndex]" alt="">
         <div class="lyricList">
           <div class="title">
-            <div class="song">{{ music.list && music.list[musicIndex]?.name }}</div>
-            <div>
-              歌手：
-              <span v-for="item in music.list && music.list[musicIndex]?.artists">{{ item.name }}</span>
-            </div>
+            <el-tooltip class="box-item" effect="dark" :content="music.list && music.list[musicIndex]?.name"
+              placement="top">
+              <div class="song">{{ music.list && music.list[musicIndex]?.name }}</div>
+            </el-tooltip>
+            <el-tooltip class="box-item" effect="dark"
+              :content="music.list && music.list[musicIndex]?.artists.map((e: any) => e.name).join(',')" placement="top">
+              <div class="artists">
+                歌手：
+                <span v-for="item in music.list && music.list[musicIndex]?.artists">{{ item.name }}</span>
+              </div>
+            </el-tooltip>
           </div>
           <el-scrollbar v-infinite-scroll="load" class="infinite-list" style="overflow: auto" ref="scrollbarRef" always
             @scroll="scroll">
             <div class="blankBox"></div>
             <template v-for="item, index in lyricList" :key="index">
-              <el-tooltip class="box-item" effect="dark" :content="item" placement="top" :disabled="item==''" >
+              <el-tooltip class="box-item" effect="dark" :content="lyricListHasTime[index]" placement="top" :disabled="item == ''">
                 <div class="infinite-list-item" :class="{ hightline: lyricIndex == index }">{{ item }}</div>
               </el-tooltip>
             </template>
@@ -196,14 +202,14 @@ const triggerDetail = (flag?: boolean) => {
     showDetail.value = !showDetail.value;
   }
 }
-const scrollbarRef:any=ref(null);
+const scrollbarRef: any = ref(null);
 //歌词滚轮事件
-const scroll = ({ scrollTop }:any) => {
+const scroll = ({ scrollTop }: any) => {
   // console.log(scrollTop);
   // scrollbarRef.value!.setScrollTop(value)
 }
-watch(lyricIndex,(value:any)=>{
-  scrollbarRef.value!.setScrollTop(value*70);
+watch(lyricIndex, (value: any) => {
+  scrollbarRef.value!.setScrollTop(value * 70);
 })
 
 const count = ref(0)
@@ -339,6 +345,7 @@ const moveLeave = (item: any) => {
     height: 100%;
     box-sizing: border-box;
     padding: 50px 300px;
+    background-color: rgba(0, 0, 0, 0.5);
     @include f-c-c;
 
     img {
@@ -362,22 +369,41 @@ const moveLeave = (item: any) => {
         .song {
           margin-right: 20px;
           font-size: 30px;
+          text-align: right;
+        }
+
+        .song,
+        .artists {
+          flex: 1 0;
+          margin: 5px 10px;
+          /* 多余文本用...代替 */
+          /* 溢出隐藏 */
+          overflow: hidden;
+          /* 设置伸缩盒子 */
+          display: -webkit-box;
+          /* 设置子元素的对齐方式 */
+          -webkit-box-orient: vertical;
+          /* 设置显示想行数 */
+          -webkit-line-clamp: 1;
         }
       }
 
       .infinite-list {
-        $height:500px;
+        $height: 500px;
         height: $height;
         padding: 0;
         margin: 0;
         margin-bottom: 50px;
         list-style: none;
-        .blankBox{
+
+        .blankBox {
           height: calc($height / 3);
         }
-        .blankBox2{
+
+        .blankBox2 {
           height: calc($height / 3 + 70px);
         }
+
         &::-webkit-scrollBar {
           display: none;
         }
@@ -640,4 +666,5 @@ const moveLeave = (item: any) => {
       margin: 20px 0 10px;
     }
   }
-}</style>
+}
+</style>
