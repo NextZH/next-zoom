@@ -3,7 +3,9 @@
     <!-- <canvas id="canvas"></canvas> -->
     <div class="musicDetail" :class="{ detailFade: !showDetail }">
       <div class="leaveBtn" @click="triggerDetail(false)">
-        <el-icon><ArrowDownBold /></el-icon>
+        <el-icon>
+          <ArrowDownBold />
+        </el-icon>
       </div>
       <div class="content">
         <img :src="Imglist[musicIndex]" alt="">
@@ -15,9 +17,23 @@
               <span v-for="item in music.list && music.list[musicIndex]?.artists">{{ item.name }}</span>
             </div>
           </div>
-          <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i,index in lyricList" :key="index" class="infinite-list-item">{{ i }}</li>
-          </ul>
+          <el-scrollbar v-infinite-scroll="load" class="infinite-list" style="overflow: auto" ref="scrollbarRef" always
+            @scroll="scroll">
+            <div class="blankBox"></div>
+            <template v-for="item, index in lyricList" :key="index">
+              <el-tooltip class="box-item" effect="dark" :content="item" placement="top" :disabled="item==''" >
+                <div class="infinite-list-item" :class="{ hightline: lyricIndex == index }">{{ item }}</div>
+              </el-tooltip>
+            </template>
+            <div class="blankBox2"></div>
+          </el-scrollbar>
+          <!-- <el-scrollbar ref="scrollbarRef" height="400px" always @scroll="scroll">
+            <div ref="innerRef">
+              <p v-for="item in 20" :key="item" class="scrollbar-demo-item">
+                {{ item }}
+              </p>
+            </div>
+          </el-scrollbar> -->
         </div>
       </div>
       <div class="detailBackground" :style="{ backgroundImage: `url(${Imglist[musicIndex]})` }"></div>
@@ -126,12 +142,12 @@ import _ from 'lodash';
 import { triggerAnime, setAnimeData, particleObj } from './animation/js/click1.js';
 import { initBackground, triggerBackground } from './animation/js/background.js';
 import Drawer from './components/Drawer.vue';
-import { Headset, DArrowRight, DArrowLeft, Top,Bottom,ArrowDownBold } from '@element-plus/icons-vue'
+import { Headset, DArrowRight, DArrowLeft, Top, Bottom, ArrowDownBold } from '@element-plus/icons-vue'
 import { useMusicStore } from '@/stores/Music';
 import { storeToRefs } from 'pinia';
 const musicStore = useMusicStore();
 const { audioPlay, audioPause, audioEnded, autoSeeked, loadstart, getMusicAsync, musicChange, loadedmetadata } = musicStore;
-const { music, autoplay, musicIndex, lyric, Imglist, musicAudio, audioCurrentTime,lyricList,lyricListHasTime } = storeToRefs(musicStore);
+const { music, autoplay, musicIndex, lyric, Imglist, musicAudio, audioCurrentTime, lyricList, lyricIndex, lyricListHasTime } = storeToRefs(musicStore);
 onMounted(() => {
   // initBackground();
   triggerBackground(false);
@@ -171,15 +187,24 @@ const hoverBtn = ref(false);
 const triggerHoverBtn = (flag: boolean) => {
   hoverBtn.value = flag;
 }
-
+//展示歌词详情
 const showDetail = ref(false);
-const triggerDetail = (flag?:boolean) => {
+const triggerDetail = (flag?: boolean) => {
   if (flag) {
-    showDetail.value=flag;
-  }else{
+    showDetail.value = flag;
+  } else {
     showDetail.value = !showDetail.value;
   }
 }
+const scrollbarRef:any=ref(null);
+//歌词滚轮事件
+const scroll = ({ scrollTop }:any) => {
+  // console.log(scrollTop);
+  // scrollbarRef.value!.setScrollTop(value)
+}
+watch(lyricIndex,(value:any)=>{
+  scrollbarRef.value!.setScrollTop(value*70);
+})
 
 const count = ref(0)
 const load = () => {
@@ -289,7 +314,8 @@ const moveLeave = (item: any) => {
   width: 100%;
   background-color: white;
   transition: 0.5s;
-  .leaveBtn{
+
+  .leaveBtn {
     position: absolute;
     // width: 60px;
     // height: 60px;
@@ -302,7 +328,8 @@ const moveLeave = (item: any) => {
     font-size: 40px;
     cursor: pointer;
     transition: 0.3s;
-    &:hover{
+
+    &:hover {
       color: #409EFF;
     }
   }
@@ -326,43 +353,73 @@ const moveLeave = (item: any) => {
       flex: 4 0;
       color: white;
       text-shadow: 0px 0px 5px black;
-      .title{
+
+      .title {
         font-weight: bold;
         margin-bottom: 50px;
         @include f-c-c;
-        .song{
+
+        .song {
           margin-right: 20px;
           font-size: 30px;
         }
       }
 
       .infinite-list {
-        height: 500px;
+        $height:500px;
+        height: $height;
         padding: 0;
         margin: 0;
         margin-bottom: 50px;
         list-style: none;
-
+        .blankBox{
+          height: calc($height / 3);
+        }
+        .blankBox2{
+          height: calc($height / 3 + 70px);
+        }
         &::-webkit-scrollBar {
           display: none;
         }
 
-        @include scrollBar;
-      }
+        :deep() .el-scrollbar__bar {
+          display: none;
+        }
 
-      .infinite-list .infinite-list-item {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        height: 50px;
-        margin: 10px;
-        box-sizing: border-box;
-        padding: 0 40px;
-      }
+        // @include scrollBar;
 
-      .infinite-list .infinite-list-item+.list-item {
-        margin-top: 10px;
+        .infinite-list-item {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          height: 40px;
+          margin: 30px 60px;
+          padding: 0 20px;
+          box-sizing: border-box;
+          /* 多余文本用...代替 */
+          /* 溢出隐藏 */
+          overflow: hidden;
+          /* 设置伸缩盒子 */
+          display: -webkit-box;
+          /* 设置子元素的对齐方式 */
+          -webkit-box-orient: vertical;
+          /* 设置显示想行数 */
+          -webkit-line-clamp: 1;
+        }
+
+        .infinite-list-item+.list-item {
+          margin-top: 10px;
+        }
+
+        .hightline {
+          transition: 0.2s;
+          font-size: 30px;
+          color: #409EFF;
+          // font-weight: bold;
+          // text-shadow: 0px 0px 20px white;
+          background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0));
+        }
       }
     }
   }
@@ -481,7 +538,8 @@ const moveLeave = (item: any) => {
 .detailFade {
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
   transform: translateY(100vh);
-  .detailBackground{
+
+  .detailBackground {
     filter: blur(0px);
   }
 }
@@ -582,5 +640,4 @@ const moveLeave = (item: any) => {
       margin: 20px 0 10px;
     }
   }
-}
-</style>
+}</style>

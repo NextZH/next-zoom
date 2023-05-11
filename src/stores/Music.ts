@@ -21,14 +21,30 @@ export const useMusicStore = defineStore('music', {
     playFlag:false,//播放标志
   }),
   getters: {
-    lyric: (state) => state.music.lyric.split('\n')[state.lyricIndex],//当前播放到的歌词
+    lyric: (state) => state.music.lyric.split('\n').filter((e:any)=>e!='')[state.lyricIndex],//当前播放到的歌词
     Imglist: (state) => state.music.musicImg.filter((e: any, i: number) => i < state.ImglistSize),//初始只显示ImglistSize=5页，避免一次性请求完卡死
     audioCurrentTime:(state)=>(state.currentTime/100).toFixed(2),
-    lyricList:(state)=>state.music.lyric.split('\n').map((e:any)=>{
+    lyricList:(state)=>state.music.lyric.split('\n').filter((e:any)=>e!='').map((e:any)=>{//歌词列表
       const index=e.indexOf(']');
       return e.slice(index+1);
     }),
-    lyricListHasTime:(state)=>state.music.lyric.split('\n'),
+    lyricListHasTime:(state)=>state.music.lyric.split('\n').filter((e:any)=>e!=''),//歌词列表(携带有时间)
+    lyricTimeList:(state)=>state.music.lyric.split('\n').filter((e:any)=>e!='').map((e:any)=>{//歌词的时间列表
+      const index1=e.indexOf('[');
+      const index2=e.indexOf(']');
+      return e.slice(index1+1,index2);
+    }),
+    lyricTimeStampList:(state)=>state.music.lyric.split('\n').filter((e:any)=>e!='').map((e:any)=>{//歌词的时间戳列表
+      const index1=e.indexOf('[');
+      const index2=e.indexOf(']');
+      const time=e.slice(index1+1,index2);
+      const arr1= time.split(':');
+      const arr2=arr1[1].split('.');
+      const m=Number(arr1[0]);
+      const s=Number(arr2[0]);
+      const ms=Number(arr2[1].slice(0,2));
+      return m*6000+s*100+ms;
+    }),
   },
   actions: {
     getMusicAsync: async function () {//从后端获取音乐
@@ -44,6 +60,7 @@ export const useMusicStore = defineStore('music', {
         let ms = this.lyricTotal % 100;
         const arr = this.music.lyric.split('\n').map((e: any) => e.slice(1, 9));
         const time = `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}.${ms < 10 ? '0' + ms : ms}`;
+        // console.log(time);
         const index = arr.indexOf(time);
         if (index != -1) {
           if (index != this.lyricIndex) {
@@ -82,10 +99,12 @@ export const useMusicStore = defineStore('music', {
     },
     audioEnded() {//结束
       this.lyricTotal = 0;
+      this.lyricIndex = 0;
       this.PauseLyric();
     },
     loadstart() {//开始加载新资源
       this.lyricTotal = 0;
+      this.lyricIndex = 0;
       this.PauseLyric();
     },
     loadedmetadata(e:any) {//加载新资源已完成
@@ -95,6 +114,13 @@ export const useMusicStore = defineStore('music', {
     autoSeeked(e: any) {//跳转到指定时间点位置播放
       this.lyricTotal = e.target.currentTime.toFixed(2) * 100;
       this.currentTime = e.target.currentTime.toFixed(2) * 100;
+      // console.log(this.lyricTimeStampList,this.lyricTimeList);
+      for (let i = 0; i < this.lyricTimeStampList.length; i++) {
+        if (this.lyricTotal<this.lyricTimeStampList[i]) {
+          this.lyricIndex=i-1;
+          break;
+        }
+      }
     },
   }
 })
