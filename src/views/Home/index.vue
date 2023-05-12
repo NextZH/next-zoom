@@ -1,5 +1,5 @@
 <template>
-  <div id="homePage">
+  <div id="homePage" :style="{ '--fontColor': fontColor }">
     <div class="row"
       :style="{ '--height': style[0].height, '--left': style[0].left.flex, '--right': style[0].right.flex, '--grow': style[0].center.grow, '--shrink': style[0].center.shrink, }">
       <div class="row-left" v-if="style[0].left.show">
@@ -158,13 +158,14 @@
             </div>
           </el-tooltip>
           <div class="controller">
-            <el-button type="primary" size="large" circle @click="playMusic">
+            <el-button :type="buttonType" size="large" circle @click="playMusic">
               <el-icon :size="40">
                 <VideoPause v-if="playFlag" />
                 <VideoPlay v-else />
               </el-icon>
             </el-button>
-            <el-slider v-model="currentTime" disabled :max="duration" :marks="marks" :format-tooltip="formatTooltip" :step="0.01" @change="sliderChange" />
+            <el-slider v-model="currentTime" disabled :max="duration" :marks="marks" :format-tooltip="formatTooltip"
+              :step="0.01" @change="sliderChange" />
           </div>
           <!-- <audio :src="music.currentMusic.url" controls style="width: 100%;" :autoplay="autoplay" @play="audioPlay" @pause="audioPause" @ended="audioEnded" @seeked="autoSeeked" @loadstart="loadstart" ></audio> -->
         </template>
@@ -195,7 +196,7 @@ import { storeToRefs } from 'pinia';
 import { useMusicStore } from '@/stores/Music';
 const musicStore = useMusicStore();
 const { musicChange } = musicStore;
-const { music, musicIndex, lyric, Imglist, musicAudio, duration,currentTime,playFlag } = storeToRefs(musicStore);
+const { music, musicIndex, lyric, Imglist, musicAudio, duration, currentTime, playFlag } = storeToRefs(musicStore);
 //音乐播放切换器实例
 const musicCarousel = ref('musicCarousel');
 //手动切换封面等
@@ -218,9 +219,9 @@ const turnMusic = (index: number) => {
   musicChange(index);
 }
 //进度条首尾长度显示
-const marks=computed(()=>({
-  0:'00:00.00',
-  [duration.value]:formatTooltip(duration.value)
+const marks = computed(() => ({
+  0: '00:00.00',
+  [duration.value]: formatTooltip(duration.value)
 }));
 //进度条显示格式化
 const formatTooltip = (value: any) => {
@@ -232,15 +233,15 @@ const formatTooltip = (value: any) => {
   return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}.${ms < 10 ? '0' + ms : ms}`;
 }
 //进度条改变
-const sliderChange=(value:any)=>{
-  console.log('前', value,(musicAudio.value as any).currentTime);
+const sliderChange = (value: any) => {
+  console.log('前', value, (musicAudio.value as any).currentTime);
   // currentTime.value=value;
-  (musicAudio.value as any).currentTime=(value/100).toFixed(6);
-  console.log('后', value,(musicAudio.value as any).currentTime);
+  (musicAudio.value as any).currentTime = (value / 100).toFixed(6);
+  console.log('后', value, (musicAudio.value as any).currentTime);
 }
 //主题
 const themeStore = useThemeStore();
-const { buttonType, buttonColor } = storeToRefs(themeStore);
+const { buttonType, buttonColor, fontColor } = storeToRefs(themeStore);
 
 //游戏列表
 const gameList: any = computed(() => menu.filter((e: any) => e.meta.isGame));
@@ -359,309 +360,312 @@ onUnmounted(() => {
 @import '@/assets/mixins.scss';
 
 #homePage {
+  $fontColor: var(--fontColor);
   width: 100%;
   height: auto;
   padding-bottom: 20px;
   display: flex;
   flex-direction: column;
-}
 
-.row {
-  flex-shrink: 0;
-  $height: var(--height);
-  $left: var(--left);
-  // $cneter: var(--cneter);
-  $right: var(--right);
-  $grow: var(--grow);
-  $shrink: var(--shrink);
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  width: 100%;
-  height: $height;
-  margin-bottom: 20px;
-
-  .row-left,
-  .row-right,
-  .row-center {
-    height: 100%;
-    margin: 0px 10px;
-    overflow: hidden;
-    flex-wrap: wrap;
-    justify-content: center;
+  .row {
+    flex-shrink: 0;
+    $height: var(--height);
+    $left: var(--left);
+    // $cneter: var(--cneter);
+    $right: var(--right);
+    $grow: var(--grow);
+    $shrink: var(--shrink);
+    display: flex;
+    justify-content: space-evenly;
     align-items: center;
-    flex-direction: column;
-    background-color: white;
+    width: 100%;
+    height: $height;
+    margin-bottom: 20px;
 
-    .item {
-      width: 100%;
-      height: 50%;
-      flex: 1 0;
-      display: flex;
+    .row-left,
+    .row-right,
+    .row-center {
+      height: 100%;
+      margin: 0px 10px;
+      overflow: hidden;
+      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       background-color: white;
 
-      // flex-direction: column;
-      // @include f-sb-c();
-      .item-left,
-      .item-right {
+      .item {
+        width: 100%;
+        height: 50%;
         flex: 1 0;
-        text-align: center;
-      }
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
 
-      .time {
-        font-size: 30px;
-      }
-
-      .week,
-      .date {
-        font-size: 20px;
-      }
-
-      .time,
-      .date,
-      .week {
-        color: white;
-        text-shadow: 0px 0px 4px black;
-      }
-
-      .temp {
-        font-size: 60px;
-        color: #409EFF;
-        text-shadow: 0px 5px 6px white;
-      }
-
-      .city {
-        font-size: 20px;
-        @include f-c-c();
-
-        span {
-          margin: 5px;
-          @include f-c-c();
+        // flex-direction: column;
+        // @include f-sb-c();
+        .item-left,
+        .item-right {
+          flex: 1 0;
+          text-align: center;
         }
 
-        .btn {
-          font-size: 12px;
-          cursor: pointer;
-          display: inline-block;
-          color: #409EFF;
+        .time {
+          font-size: 30px;
+        }
+
+        .week,
+        .date {
+          font-size: 20px;
+        }
+
+        .time,
+        .date,
+        .week {
+          color: white;
+          text-shadow: 0px 0px 4px black;
+        }
+
+        .temp {
+          font-size: 60px;
+          color: $fontColor;
           text-shadow: 0px 5px 6px white;
-          font-weight: bold;
-          width: 50px;
         }
 
-        .position {
-          animation: move infinite 1.5s ease-in-out;
+        .city {
+          font-size: 20px;
+          @include f-c-c();
+
+          span {
+            margin: 5px;
+            @include f-c-c();
+          }
+
+          .btn {
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-block;
+            color: $fontColor;
+            text-shadow: 0px 5px 6px white;
+            font-weight: bold;
+            width: 50px;
+          }
+
+          .position {
+            animation: move infinite 1.5s ease-in-out;
+          }
+
+          @keyframes move {
+            0% {
+              transform: translateY(0px);
+            }
+
+            50% {
+              transform: translateY(-10px);
+            }
+
+            100% {
+              transform: translateY(0px);
+            }
+          }
         }
 
-        @keyframes move {
-          0% {
-            transform: translateY(0px);
-          }
+        .list {
+          font-size: 14px;
+        }
 
-          50% {
-            transform: translateY(-10px);
-          }
-
-          100% {
-            transform: translateY(0px);
-          }
+        .city,
+        .list {
+          color: white;
+          text-shadow: 0px 3px 5px black;
         }
       }
 
-      .list {
-        font-size: 14px;
+      .sky {
+        background-image: url(@/assets/sky.webp);
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
       }
 
-      .city,
-      .list {
-        color: white;
-        text-shadow: 0px 3px 5px black;
-      }
-    }
-
-    .sky {
-      background-image: url(@/assets/sky.webp);
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
-
-    .clock {
-      background-image: -webkit-cross-fade(url(@/assets/sky.webp), url(@/assets/clock.webp), 50%);
-      // background-image: cross-fade(url(@/assets/sky.webp),url(@/assets/clock.webp),50%);
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
-
-    @include border();
-    // @include f-sb-c();
-  }
-
-  .row-left {
-    flex: $left;
-  }
-
-  .row-center {
-    flex: $grow $shrink;
-  }
-
-  .row-right {
-    flex: $right;
-  }
-
-  .application {
-    padding: 20px;
-    box-sizing: border-box;
-    background-image: url(@/assets/webp/desk2.webp);
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    overflow: auto;
-    @include scrollBar();
-
-    .title {
-      font-size: 25px;
-      font-family: 'H-新雅兰';
-      color: #9198e5;
-      text-shadow: 0px 0px 10px white;
-      font-weight: bold;
-    }
-  }
-
-  .game {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    // justify-content: space-evenly;
-    align-items: flex-start;
-    box-sizing: border-box;
-
-    .gameItem {
-      width: 80px;
-      height: 80px;
-      margin: 5px 10px;
-      flex-direction: column;
-      background-color: #fbe7b5;
-      cursor: pointer;
-      color: white;
-      text-shadow: 0px 0px 5px black;
-
-      &:hover {
-        transition: 0.3s;
-        background-color: #9198e584;
-        color: #666;
-        text-shadow: 0px 0px 5px white;
+      .clock {
+        background-image: -webkit-cross-fade(url(@/assets/sky.webp), url(@/assets/clock.webp), 50%);
+        // background-image: cross-fade(url(@/assets/sky.webp),url(@/assets/clock.webp),50%);
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
       }
 
-      @include f-c-c();
       @include border();
+      // @include f-sb-c();
     }
-  }
 
-  .calendar {
-    overflow: auto;
-    @include scrollBar();
-  }
+    .row-left {
+      flex: $left;
+    }
 
-  .anime {
-    .el-tabs {
-      height: 100%;
-      overflow: auto;
-      background-image: url(@/assets/webp/yinghua.webp);
+    .row-center {
+      flex: $grow $shrink;
+    }
+
+    .row-right {
+      flex: $right;
+    }
+
+    .application {
+      padding: 20px;
+      box-sizing: border-box;
+      background-image: url(@/assets/webp/desk2.webp);
       background-position: center center;
       background-repeat: no-repeat;
       background-size: cover;
+      overflow: auto;
+      @include scrollBar();
+
+      .title {
+        font-size: 25px;
+        font-family: 'H-新雅兰';
+        color: #9198e5;
+        text-shadow: 0px 0px 10px white;
+        font-weight: bold;
+      }
+    }
+
+    .game {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      // justify-content: space-evenly;
+      align-items: flex-start;
+      box-sizing: border-box;
+
+      .gameItem {
+        width: 80px;
+        height: 80px;
+        margin: 5px 10px;
+        flex-direction: column;
+        background-color: #fbe7b5;
+        cursor: pointer;
+        color: white;
+        text-shadow: 0px 0px 5px black;
+
+        &:hover {
+          transition: 0.3s;
+          background-color: #9198e584;
+          color: #666;
+          text-shadow: 0px 0px 5px white;
+        }
+
+        @include f-c-c();
+        @include border();
+      }
+    }
+
+    .calendar {
+      overflow: auto;
       @include scrollBar();
     }
 
-    // .el-tabs__content{
-    //   overflow: auto;
-    // }
-    // ul{
-    //   height: 100%;
-    // }
-    li {
-      display: flex;
+    .anime {
+      .el-tabs {
+        height: 100%;
+        overflow: auto;
+        background-image: url(@/assets/webp/yinghua.webp);
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        @include scrollBar();
+      }
+
+      // .el-tabs__content{
+      //   overflow: auto;
+      // }
+      // ul{
+      //   height: 100%;
+      // }
+      li {
+        display: flex;
+        font-size: 14px;
+        justify-content: space-between;
+        flex-wrap: wrap;
+
+        a {
+          font-weight: bold;
+          color: black;
+          text-decoration: none;
+
+          &:hover {
+            color: white;
+            text-shadow: 0px 0px 3px black;
+          }
+
+          &:nth-child(1) {
+            flex: 6 1;
+          }
+
+          &:nth-child(2) {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            flex: 1 0;
+          }
+        }
+      }
+    }
+
+    .music {
+      // display: flex;
+      // flex-direction: column;
+      color: $fontColor;
       font-size: 14px;
-      justify-content: space-between;
-      flex-wrap: wrap;
 
-      a {
-        font-weight: bold;
-        color: black;
-        text-decoration: none;
+      .song {
+        font-size: 20px;
+      }
 
-        &:hover {
-          color: white;
-          text-shadow: 0px 0px 3px black;
-        }
+      // .lyric{
+      //   height: 20px;
+      // }
+      audio {
+        margin-top: 14px;
+      }
 
-        &:nth-child(1) {
-          flex: 6 1;
-        }
+      .controller {
+        margin: 5px 10px;
+        display: flex;
+        align-items: center;
 
-        &:nth-child(2) {
-          display: flex;
-          justify-content: flex-end;
-          align-items: flex-end;
-          flex: 1 0;
+        .el-slider {
+          margin: 0 40px;
         }
       }
-    }
-  }
 
-  .music {
-    // display: flex;
-    // flex-direction: column;
-    color: #409EFF;
-    font-size: 14px;
-
-    .song {
-      font-size: 20px;
-    }
-
-    // .lyric{
-    //   height: 20px;
-    // }
-    audio {
-      margin-top: 14px;
-    }
-
-    .controller {
-      margin: 5px 10px;
-      display: flex;
-      align-items: center;
-
-      .el-slider {
-        margin: 0 40px;
+      .song,
+      .lyric,
+      .artists {
+        margin: 5px 10px;
+        /* 多余文本用...代替 */
+        /* 溢出隐藏 */
+        overflow: hidden;
+        /* 设置伸缩盒子 */
+        display: -webkit-box;
+        /* 设置子元素的对齐方式 */
+        -webkit-box-orient: vertical;
+        /* 设置显示想行数 */
+        -webkit-line-clamp: 1;
       }
     }
 
-    .song,
-    .lyric,
-    .artists {
-      margin: 5px 10px;
-      /* 多余文本用...代替 */
-      /* 溢出隐藏 */
-      overflow: hidden;
-      /* 设置伸缩盒子 */
-      display: -webkit-box;
-      /* 设置子元素的对齐方式 */
-      -webkit-box-orient: vertical;
-      /* 设置显示想行数 */
-      -webkit-line-clamp: 1;
+    .empty {
+      height: 100%;
+      font-size: 30px;
+      @include f-c-c();
     }
-  }
-
-  .empty {
-    height: 100%;
-    font-size: 30px;
-    @include f-c-c();
   }
 }
+
+
 
 .bm-view {
   width: 100%;

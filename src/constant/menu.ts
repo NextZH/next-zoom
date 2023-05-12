@@ -5,6 +5,7 @@ import {
   Setting,
   ZoomOut,
   SwitchFilled,
+  Headset,
 } from '@element-plus/icons-vue'
 
 const basePath = '/src/assets/menuIcon/';
@@ -80,6 +81,16 @@ const menu = [
       isGame:false,
     },
     children: [
+      {
+        path: '/music',
+        name: 'music',
+        title: '音乐',
+        icon: Headset,
+        meta:{
+          important:true,
+          isGame:false,
+        },
+      },
       {
         path: '/beibao',
         name: 'beibao',

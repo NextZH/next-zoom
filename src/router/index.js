@@ -9,6 +9,7 @@ const routerComponent = {
   Wuziqi: () => import('../views/Wuziqi/index.vue'),
   Xiangqi: () => import('../views/Xiangqi/index.vue'),
   Yanglegeyang: () => import('../views/Yanglegeyang/index.vue'),
+  Music:()=>import('../views/Gongneng/Music/index.vue'),
   Menu: () => import('../views/Setting/Menu/index.vue'),
   Theme: () => import('../views/Setting/Theme/index.vue'),
   BlankPage: () => import('../views/BlankPage.vue'),

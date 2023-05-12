@@ -5,16 +5,24 @@
         @node-click="handleNodeClick" />
     </div>
     <div class="right">
-      <div class="item" v-if="currentValue==list[0].value">
-        <div class="title">{{ list[0].title }}</div>
-        <div class="content">
-          <el-radio-group v-model="list[0].current" class="ml-4" @change="setButton" :fill="buttonColor">
-            <el-radio-button v-for="item in list[0].radio" :label="item.label" :key="item.label" size="large">
-              {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
+      <template v-for="itemSetting in list">
+        <div class="item" v-if="currentValue == itemSetting.value||currentValue == 'all'">
+          <div class="settingName">
+            {{ itemSetting.label }}
+          </div>
+          <template v-for="item,i in itemSetting.options" :key="item.title">
+            <div class="title">{{ `${i+1}.${item.title}` }}</div>
+            <div class="content">
+              <el-radio-group v-model="item.current" class="ml-4" @change="setButton(item,itemSetting)" :fill="itemSetting.value=='font'?fontColor:buttonColor">
+                <el-radio-button v-for="radio in item.radio" :label="item.title == '颜色' ? radio.label : radio.value"
+                  :key="radio.label" size="large">
+                  {{ radio.label }}
+                </el-radio-button>
+              </el-radio-group>
+            </div>
+          </template>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -23,15 +31,24 @@
 import { ref, reactive, computed } from 'vue';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
-import {setList,treeData} from './constant'
+import { setList, treeData } from './constant'
 const themeStore = useThemeStore();
-const { setButtonType } = themeStore;
-const { buttonType, buttonColor } = storeToRefs(themeStore);
-const setButton = () => {
-  const item = list[0].radio.find((e: any) => list[0].current == e.label);
-  setButtonType(item);
-  console.log(buttonType.value, buttonColor.value);
-
+const { setButtonType,setFontType,setFontBtnSync } = themeStore;
+const { buttonType, buttonColor,fontBtnSync,fontColor,fontType } = storeToRefs(themeStore);
+const setButton = (item: any,itemSetting:any) => {
+  if (item.value=='color') {
+    const target = item.radio.find((e: any) => item.current == e.label);
+    if (itemSetting.value=='button') {
+      setButtonType(target);
+    }
+    if (itemSetting.value=='font') {
+      setFontType(target);
+    }
+    // console.log(buttonType.value, buttonColor.value);
+  } else if(item.value=='sync') {
+    const target = item.radio.find((e: any) => item.current == e.value);
+    setFontBtnSync(target.value);
+  }
 }
 
 const currentValue = ref('button');
@@ -39,7 +56,7 @@ const currentValue = ref('button');
 const list = reactive(setList);
 const handleNodeClick = (data: any) => {
   console.log(data)
-  currentValue.value=data.value;
+  currentValue.value = data.value;
 }
 
 const expandList = computed(() => treeData.filter((e: any) => e.children).map((e: any) => e.value));
@@ -50,7 +67,7 @@ const defaultProps = {
   value: 'value',
 }
 
-const created=()=>{
+const created = () => {
   handleNodeClick(treeData[0])
 }
 created();
@@ -83,9 +100,13 @@ created();
     box-sizing: border-box;
     padding: 20px;
     @include border();
-    .title{
-      margin-bottom: 10px;
+    .settingName{
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .title {
+      font-size: 14px;
+      margin: 10px 0;
     }
   }
-}
-</style>
+}</style>

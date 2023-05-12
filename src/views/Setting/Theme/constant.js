@@ -1,34 +1,88 @@
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
 const themeStore = useThemeStore();
-const { buttonType } = storeToRefs(themeStore);
+const { buttonType,fontBtnSync,fontType } = storeToRefs(themeStore);
 export const setList = [
   {
-    title: '颜色',
     value:'button',
-    radio: [
+    label: '按钮设置',
+    options:[
       {
-        label: 'primary',
-        color: '#409EFF'
+        title: '颜色',
+        value:'color',
+        radio: [
+          {
+            label: 'primary',
+            value: '#409EFF'
+          },
+          {
+            label: 'success',
+            value: '#67C23A'
+          },
+          {
+            label: 'warning',
+            value: '#E6A23C'
+          },
+          {
+            label: 'danger',
+            value: '#F56C6C'
+          },
+          {
+            label: 'info',
+            value: '#909399'
+          },
+        ],
+        current: buttonType
       },
       {
-        label: 'success',
-        color: '#67C23A'
-      },
-      {
-        label: 'warning',
-        color: '#E6A23C'
-      },
-      {
-        label: 'danger',
-        color: '#F56C6C'
-      },
-      {
-        label: 'info',
-        color: '#909399'
+        title: '是否同时改变字体颜色',
+        value:'sync',
+        radio: [
+          {
+            label: '是',
+            value:'1',
+          },
+          {
+            label: '否',
+            value:'0',
+          },
+        ],
+        current: fontBtnSync
       },
     ],
-    current: buttonType
+  },
+  {
+    value:'font',
+    label: '字体设置',
+    options:[
+      {
+        title: '颜色',
+        value: 'color',
+        radio: [
+          {
+            label: 'primary',
+            value: '#409EFF'
+          },
+          {
+            label: 'success',
+            value: '#67C23A'
+          },
+          {
+            label: 'warning',
+            value: '#E6A23C'
+          },
+          {
+            label: 'danger',
+            value: '#F56C6C'
+          },
+          {
+            label: 'info',
+            value: '#909399'
+          },
+        ],
+        current: fontType
+      },
+    ]
   }
 ];
 export const treeData = [
@@ -39,6 +93,10 @@ export const treeData = [
   {
     label: '按钮设置',
     value: 'button',
+  },
+  {
+    label: '字体设置',
+    value: 'font',
   },
   {
     label: '主题设置',

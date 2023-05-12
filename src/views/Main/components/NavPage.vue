@@ -16,7 +16,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import menu from './../constant/menu'
+import menu from '@/constant/menu'
 import MenuItem from '@/components/MenuItem.vue';
 import {
   Document,
@@ -43,7 +43,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 </script>
 
 <style scoped lang="scss">
-@import "./../assets/mixins.scss";
+@import "@/assets/mixins.scss";
 
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;

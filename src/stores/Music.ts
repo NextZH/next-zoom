@@ -86,12 +86,12 @@ export const useMusicStore = defineStore('music', {
       this.musicIndex = index;
       this.ImglistSize - index < 2 && this.ImglistSize++;
       // console.log(index,Imglist);
-      const res = await getMusic(this.music.list[index].id);
+      const res = await getMusic({id:this.music.list[index].id});
       this.music.currentMusic = res.data[0];
-      const res2 = await getLyric(this.music.list[index].id);
+      const res2 = await getLyric({id:this.music.list[index].id});
       this.music.lyric = res2.lrc.lyric;
       // this.duration=0;
-      // this.autoplay = true;
+      this.autoplay = true;
     },
     audioPlay() {//播放
       this.playFlag = true;
@@ -105,6 +105,7 @@ export const useMusicStore = defineStore('music', {
       this.lyricTotal = 0;
       this.lyricIndex = 0;
       this.PauseLyric();
+      this.musicChange(this.musicIndex+1);
     },
     loadstart() {//开始加载新资源
       this.lyricTotal = 0;
@@ -114,6 +115,7 @@ export const useMusicStore = defineStore('music', {
     loadedmetadata(e: any) {//加载新资源已完成
       // console.log(e,e.target,e.target.duration);
       this.duration = e.target.duration * 100;
+      // this.audioPlay();
     },
     autoSeeked(e: any) {//跳转到指定时间点位置播放
       this.lyricTotal = e.target.currentTime.toFixed(2) * 100;
