@@ -7,14 +7,18 @@
 <script setup lang="ts">
 import Main from '@/views/Main/index.vue'
 import { useThemeStore } from '@/stores/Theme';
+import { useMapStore } from '@/stores/BaiduMap';
 import { storeToRefs } from 'pinia';
 const themeStore = useThemeStore();
+const mapStore = useMapStore();
 const { initColor }=themeStore;
+const { initMapFlag }=mapStore;
 const { buttonType, buttonColor } = storeToRefs(themeStore);
 
 
 const init=()=>{
   initColor();
+  initMapFlag();
 }
 
 //created生命周期
@@ -43,6 +47,10 @@ const init=()=>{
 </script>
 
 <style lang="scss">
+@import '@/assets/mixins.scss';
+#app,body{
+  @include scrollBar();
+}
 #app-config-page {
   $btnColor: var(--btnColor);
 
@@ -50,6 +58,7 @@ const init=()=>{
   position: relative;
   overflow: hidden;
   // background-color: black;
+  @include scrollBar();
 
   /* 按钮主题色配置 */
   .el-radio__input {

@@ -3,6 +3,7 @@ import { getMusic, getTopSong, getLyric } from '@/api/wangyiyun';
 
 export const useMusicStore = defineStore('music', {
   state: () => ({
+    musicPlugin:true,//音乐插件是否开启
     musicIndex: 0,//当前播放的音乐对象索引
     ImglistSize: 5,//展示封面页数
     music: {//音乐列表

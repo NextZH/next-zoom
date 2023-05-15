@@ -66,14 +66,22 @@
         <Carousel :list="list" :height="style[0].height"></Carousel>
       </div>
       <div class="row-right" v-if="style[0].right.show">
-        <!-- 百度地图 -->
-        <baidu-map class="bm-view" :center="city" :zoom="15">
-          <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-scale>
-          <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
-          <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-map-type>
-          <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true"></bm-geolocation>
-          <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
-        </baidu-map>
+        <template v-if="mapFlag">
+          <!-- 百度地图 -->
+          <baidu-map class="bm-view" :center="city" :zoom="15">
+            <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-scale>
+            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
+            <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-map-type>
+            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true"
+              :autoLocation="true"></bm-geolocation>
+            <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
+          </baidu-map>
+        </template>
+        <template v-else>
+          <div class="empty">
+            地图插件已关闭
+          </div>
+        </template>
       </div>
     </div>
     <div class="row"
@@ -137,7 +145,7 @@
         </el-tabs>
       </div>
       <div class="row-center music" v-if="style[2].center.show">
-        <template v-if="music.list.length > 0">
+        <template v-if="musicPlugin">
           <Carousel ref="musicCarousel" :list="Imglist" :height="'200px'" :is-card="true" :indicatorPosition="'none'"
             :autoplay="false" :initial-index="musicIndex" :arrow="'always'"
             :style="{ btnBgColor: 'white', btnColor: 'black' }" :change="turnMusic"></Carousel>
@@ -194,9 +202,13 @@ import { VideoPlay, VideoPause } from '@element-plus/icons-vue';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
 import { useMusicStore } from '@/stores/Music';
+import { useMapStore } from '@/stores/BaiduMap';
+const mapStore = useMapStore();
+const { mapFlag } = storeToRefs(mapStore);
+
 const musicStore = useMusicStore();
 const { musicChange } = musicStore;
-const { music, musicIndex, lyric, Imglist, musicAudio, duration, currentTime, playFlag } = storeToRefs(musicStore);
+const { music, musicIndex, lyric, Imglist, musicAudio, duration, currentTime, playFlag,musicPlugin } = storeToRefs(musicStore);
 //音乐播放切换器实例
 const musicCarousel = ref('musicCarousel');
 //手动切换封面等
@@ -658,6 +670,7 @@ onUnmounted(() => {
     }
 
     .empty {
+      color: $fontColor;
       height: 100%;
       font-size: 30px;
       @include f-c-c();

@@ -1,5 +1,5 @@
 <template>
-  <div id="singerPage">
+  <div id="singerPage" v-loading="initLoading">
     <el-form :model="form" label-width="120px">
       <el-form-item label="地区">
         <el-radio-group v-model="form.area" size="large" @change="change" :fill="buttonColor">
@@ -50,13 +50,15 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive,ref } from 'vue';
 import { singerType, singerArea, singerSort } from '../constant';
 import { getArtist } from '@/api/wangyiyun';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
 const themeStore = useThemeStore();
 const { buttonColor } = storeToRefs(themeStore);
+
+const initLoading=ref(false);
 
 const form = reactive({
   area: -1,
@@ -66,24 +68,16 @@ const form = reactive({
   offset: 0,
 })
 
-const onSubmit = () => {
-  console.log('submit!')
-}
 
 let singer: any = reactive({
   list: [],
 });
 const getArtistAsync = async () => {
+  initLoading.value=true;
   const res = await getArtist(form);
-  console.log(res);
+  // console.log(res);
   singer.list = res.artists;
-  // for (let i = 0; i < singerList.length; i++) {
-  //   singer.list.pop();
-  // }
-  // res.artists.forEach((e:any)=>{
-  //   singerList.push(e);
-  // })
-  // singerList = res.artists;
+  initLoading.value=false;
 }
 const change = () => {
   getArtistAsync();

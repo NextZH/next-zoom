@@ -17,7 +17,7 @@
         @change="changeShowBackground" />
     </div>
     <div class="right">
-      <img class="gif" src="../assets/gif/huaji2.gif" alt="" height="60">
+      <img class="gif" src="@/assets/gif/huaji2.gif" alt="" height="60">
     </div>
   </div>
 </template>

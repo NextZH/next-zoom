@@ -1,6 +1,7 @@
 <template>
   <!-- <canvas id="canvas"></canvas> -->
-  <div class="musicDetail" :class="{ detailFade: !showDetail }" :style="{'--fontColor':fontColor,'--buttonColor':buttonColor,}" >
+  <div class="musicDetail" :class="{ detailFade: !showDetail }"
+    :style="{ '--fontColor': fontColor, '--buttonColor': buttonColor, }">
     <div class="leaveBtn" @click="triggerDetail(false)">
       <el-icon>
         <ArrowDownBold />
@@ -44,7 +45,7 @@
     </div>
     <div class="detailBackground" :style="{ backgroundImage: `url(${Imglist[musicIndex]})` }"></div>
   </div>
-  <div class="music" :class="{ fade: !showMusic }" :style="{'--fontColor':fontColor,'--buttonColor':buttonColor,}" >
+  <div class="music" :class="{ fade: !showMusic }" :style="{ '--fontColor': fontColor, '--buttonColor': buttonColor, }">
     <div class="musicImg" @mouseenter="triggerHoverBtn(true)" @mouseleave="triggerHoverBtn(false)">
       <div class="hoverBtn" v-if="hoverBtn" @click="triggerDetail()">
         <el-icon>
@@ -84,10 +85,16 @@
       @loadedmetadata="loadedmetadata"></audio>
   </div>
   <el-tooltip class="box-item" effect="dark" content="音乐" placement="left">
-    <div class="musicBtn" @click="triggerMusicBox" :style="{ '--btnColor': buttonColor }" >
-      <!-- 打开 -->
+    <div class="musicBtn" @click="triggerMusicBox" :style="{ '--btnColor': buttonColor }">
       <el-icon>
         <Headset />
+      </el-icon>
+    </div>
+  </el-tooltip>
+  <el-tooltip class="box-item" effect="dark" content="地图" placement="left">
+    <div class="mapBtn" @click="triggerMapBox" :style="{ '--btnColor': buttonColor }">
+      <el-icon>
+        <LocationInformation />
       </el-icon>
     </div>
   </el-tooltip>
@@ -147,15 +154,19 @@ import _ from 'lodash';
 import { triggerAnime, setAnimeData, particleObj } from '@/animation/js/click1.js';
 import { initBackground, triggerBackground } from '@/animation/js/background.js';
 import Drawer from '@/components/Drawer.vue';
-import { Headset, DArrowRight, DArrowLeft, Top, Bottom, ArrowDownBold } from '@element-plus/icons-vue'
+import { Headset, DArrowRight, DArrowLeft, Top, Bottom, ArrowDownBold, LocationInformation } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 import { storeToRefs } from 'pinia';
 import { useThemeStore } from '@/stores/Theme';
 import { useMusicStore } from '@/stores/Music';
+import { useMapStore } from '@/stores/BaiduMap';
+const mapStore = useMapStore();
+const { setmapFlag } = mapStore;
 const themeStore = useThemeStore();
-const { buttonType, buttonColor,fontColor } = storeToRefs(themeStore);
+const { buttonType, buttonColor, fontColor } = storeToRefs(themeStore);
 const musicStore = useMusicStore();
 const { audioPlay, audioPause, audioEnded, autoSeeked, loadstart, getMusicAsync, musicChange, loadedmetadata } = musicStore;
-const { music, autoplay, musicIndex, lyric, Imglist, musicAudio, audioCurrentTime, lyricList, lyricIndex, lyricListHasTime } = storeToRefs(musicStore);
+const { music, autoplay, musicIndex, lyric, Imglist, musicAudio, audioCurrentTime, lyricList, lyricIndex, lyricListHasTime, musicPlugin } = storeToRefs(musicStore);
 onMounted(() => {
   // initBackground();
   triggerBackground(false);
@@ -170,7 +181,18 @@ watch(showBackground, () => {
 const showMusic = ref(false);
 //打开音乐主控制台
 const triggerMusicBox = () => {
-  showMusic.value = !showMusic.value;
+  if (musicPlugin.value) {
+    showMusic.value = !showMusic.value;
+  } else {
+    ElMessage({
+      message: '当前音乐插件未启动，请联系后端启动插件',
+      type: 'success',
+    })
+  }
+}
+//打开地图插件
+const triggerMapBox = () => {
+  setmapFlag();
 }
 //切歌
 const turnMusic = (flag: boolean) => {
@@ -289,8 +311,8 @@ const moveLeave = (item: any) => {
 
 
 .musicDetail {
-  $fontColor:var(--fontColor);
-  $buttonColor:var(--buttonColor);
+  $fontColor: var(--fontColor);
+  $buttonColor: var(--buttonColor);
   position: fixed;
   z-index: 99;
   bottom: 0;
@@ -453,8 +475,8 @@ const moveLeave = (item: any) => {
 }
 
 .music {
-  $fontColor:var(--fontColor);
-  $buttonColor:var(--buttonColor);
+  $fontColor: var(--fontColor);
+  $buttonColor: var(--buttonColor);
   position: fixed;
   z-index: 100;
   height: 100px;
@@ -555,12 +577,36 @@ const moveLeave = (item: any) => {
 
 .musicBtn {
   $btnColor: var(--btnColor);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   position: fixed;
   z-index: 98;
   right: 50px;
   bottom: 200px;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  color: $btnColor;
+  border-radius: 50%;
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  @include f-c-c();
+
+  &:hover {
+    transition: 0.5s;
+    background-color: $btnColor;
+    color: white;
+  }
+}
+
+.mapBtn {
+  $btnColor: var(--btnColor);
+  font-size: 18px;
+  font-weight: bold;
+  position: fixed;
+  z-index: 98;
+  right: 50px;
+  bottom: 250px;
   width: 40px;
   height: 40px;
   background-color: white;
