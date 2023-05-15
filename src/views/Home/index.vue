@@ -133,8 +133,8 @@
     <div class="row"
       :style="{ '--height': style[2].height, '--left': style[2].left.flex, '--right': style[2].right.flex, '--grow': style[2].center.grow, '--shrink': style[2].center.shrink, }">
       <div class="row-left anime" v-if="style[2].left.show">
-        <el-tabs type="border-card">
-          <el-tab-pane :label="anime.tagList[i]" v-for="list, i in anime.dataList" :key="i">
+        <el-tabs type="border-card" v-model="week" >
+          <el-tab-pane :label="anime.tagList[i]" v-for="list, i in anime.dataList" :key="i" :name="i!=6?i+1+'':'0'" >
             <ul>
               <li v-for="item in list">
                 <span><a :href="anime.baseURL + item.nameUrl" target="_blank">{{ item.name }}</a></span>
@@ -283,7 +283,7 @@ const weekformat = (week: string) => {
       return '五';
     case '6':
       return '六';
-    case '7':
+    case '0':
       return '日';
     default:
       return '';
