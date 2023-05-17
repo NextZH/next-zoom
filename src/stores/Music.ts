@@ -3,10 +3,11 @@ import { getMusic, getTopSong, getLyric } from '@/api/wangyiyun';
 
 export const useMusicStore = defineStore('music', {
   state: () => ({
-    musicPlugin:true,//音乐插件是否开启
+    musicPlugin: true,//音乐插件是否开启
     musicIndex: 0,//当前播放的音乐对象索引
     ImglistSize: 5,//展示封面页数
     music: {//音乐列表
+      listId:'',//用于区分当前播放的是哪个列表
       list: [] as any[],//总的音乐对象列表
       musicImg: [] as any[],//所有封面链接集合
       currentMusic: {} as any,//当前播放的音乐对象
@@ -15,11 +16,13 @@ export const useMusicStore = defineStore('music', {
     lyricIndex: 0,//歌词索引
     lyricTimer: 0,//歌词定时器
     lyricTotal: 0,//歌词播放时段记录
-    autoplay: false,//是否自动播放
+    autoplay: false,//是否自动播放,用于调用播放最好的方法
     musicAudio: null,//音乐主控制台实例
     duration: 0,//时长
     currentTime: 0,//当前播放位置
     playFlag: false,//播放标志
+    isMusicChange: false,//是否通过调用musicChange方法导致的资源重新加载的标志
+
   }),
   getters: {
     lyric: (state) => state.music.lyric.split('\n').filter((e: any) => e != '').map((e: any) => {//当前播放到的歌词
@@ -53,10 +56,22 @@ export const useMusicStore = defineStore('music', {
   },
   actions: {
     getMusicAsync: async function () {//从后端获取音乐
-      const res = await getTopSong();
-      this.music.list = res.data;
-      this.music.musicImg = res.data.map((e: any) => e.album.blurPicUrl);
-      this.musicChange(0);
+      const musicStr = localStorage.getItem('music');
+      if (musicStr) {
+        this.music = JSON.parse(musicStr);
+        this.music.list.forEach((e:any,i:number)=>{
+          if (e.id==this.music.currentMusic.id) {
+            this.musicIndex=i;
+          }
+        })
+      } else {
+        const res = await getTopSong();
+        this.music.list = res.data;
+        this.music.listId = 'topSong';
+        this.music.musicImg = res.data.map((e: any) => e.album.blurPicUrl);
+        await this.musicChange(0);
+        
+      }
     },
     playLyric() {//播放歌词
       this.lyricTimer = setInterval(() => {
@@ -87,12 +102,14 @@ export const useMusicStore = defineStore('music', {
       this.musicIndex = index;
       this.ImglistSize - index < 2 && this.ImglistSize++;
       // console.log(index,Imglist);
-      const res = await getMusic({id:this.music.list[index].id});
+      const res = await getMusic({ id: this.music.list[index].id });
       this.music.currentMusic = res.data[0];
-      const res2 = await getLyric({id:this.music.list[index].id});
+      const res2 = await getLyric({ id: this.music.list[index].id });
       this.music.lyric = res2.lrc.lyric;
+      localStorage.setItem('music',JSON.stringify(this.music));
+      this.isMusicChange = true;
       // this.duration=0;
-      this.autoplay = true;
+      // this.autoplay = true;
     },
     audioPlay() {//播放
       this.playFlag = true;
@@ -106,7 +123,7 @@ export const useMusicStore = defineStore('music', {
       this.lyricTotal = 0;
       this.lyricIndex = 0;
       this.PauseLyric();
-      this.musicChange(this.musicIndex+1);
+      this.musicChange(this.musicIndex + 1);
     },
     loadstart() {//开始加载新资源
       this.lyricTotal = 0;
@@ -117,6 +134,10 @@ export const useMusicStore = defineStore('music', {
       // console.log(e,e.target,e.target.duration);
       this.duration = e.target.duration * 100;
       // this.audioPlay();
+      if (this.isMusicChange) {
+        this.autoplay = true;
+        this.isMusicChange = false;
+      }
     },
     autoSeeked(e: any) {//跳转到指定时间点位置播放
       this.lyricTotal = e.target.currentTime.toFixed(2) * 100;

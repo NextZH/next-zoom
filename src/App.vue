@@ -49,6 +49,9 @@ const init=()=>{
 <style lang="scss">
 @import '@/assets/mixins.scss';
 #app,body{
+  &::-webkit-scrollBar{
+    display: none;
+  }
   @include scrollBar();
 }
 #app-config-page {

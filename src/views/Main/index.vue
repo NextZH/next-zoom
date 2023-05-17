@@ -72,17 +72,25 @@
         </div>
       </el-tooltip>
     </div>
-    <div class="audioBtn">
-      <el-tooltip class="box-item" effect="dark" content="上一首" placement="top">
-        <el-button :type="buttonType" size="large" :icon="DArrowLeft" circle @click="turnMusic(false)" />
-      </el-tooltip>
-      <el-tooltip class="box-item" effect="dark" content="下一首" placement="top">
-        <el-button :type="buttonType" size="large" :icon="DArrowRight" circle @click="turnMusic(true)" />
-      </el-tooltip>
+    <div class="musicController">
+      <div class="audioBtn">
+        <el-tooltip class="box-item" effect="dark" content="上一首" placement="top">
+          <el-button :type="buttonType" :icon="DArrowLeft" circle @click="turnMusic(false)" />
+        </el-tooltip>
+        <el-button :type="buttonType" size="large" circle @click="playMusic">
+          <el-icon :size="40">
+            <VideoPause v-if="playFlag" />
+            <VideoPlay v-else />
+          </el-icon>
+        </el-button>
+        <el-tooltip class="box-item" effect="dark" content="下一首" placement="top">
+          <el-button :type="buttonType" :icon="DArrowRight" circle @click="turnMusic(true)" />
+        </el-tooltip>
+      </div>
+      <audio ref="musicAudio" :src="music.currentMusic.url" controls style="width: 100%;" :autoplay="autoplay"
+        @play="audioPlay" @pause="audioPause" @ended="audioEnded" @seeked="autoSeeked" @loadstart="loadstart"
+        @loadedmetadata="loadedmetadata"></audio>
     </div>
-    <audio ref="musicAudio" :src="music.currentMusic.url" controls style="width: 100%;" :autoplay="autoplay"
-      @play="audioPlay" @pause="audioPause" @ended="audioEnded" @seeked="autoSeeked" @loadstart="loadstart"
-      @loadedmetadata="loadedmetadata"></audio>
   </div>
   <el-tooltip class="box-item" effect="dark" content="音乐" placement="left">
     <div class="musicBtn" @click="triggerMusicBox" :style="{ '--btnColor': buttonColor }">
@@ -154,7 +162,7 @@ import _ from 'lodash';
 import { triggerAnime, setAnimeData, particleObj } from '@/animation/js/click1.js';
 import { initBackground, triggerBackground } from '@/animation/js/background.js';
 import Drawer from '@/components/Drawer.vue';
-import { Headset, DArrowRight, DArrowLeft, Top, Bottom, ArrowDownBold, LocationInformation } from '@element-plus/icons-vue';
+import { Headset, DArrowRight, DArrowLeft, Top, Bottom, ArrowDownBold, LocationInformation, VideoPause, VideoPlay } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { storeToRefs } from 'pinia';
 import { useThemeStore } from '@/stores/Theme';
@@ -166,7 +174,7 @@ const themeStore = useThemeStore();
 const { buttonType, buttonColor, fontColor } = storeToRefs(themeStore);
 const musicStore = useMusicStore();
 const { audioPlay, audioPause, audioEnded, autoSeeked, loadstart, getMusicAsync, musicChange, loadedmetadata } = musicStore;
-const { music, autoplay, musicIndex, lyric, Imglist, musicAudio, audioCurrentTime, lyricList, lyricIndex, lyricListHasTime, musicPlugin } = storeToRefs(musicStore);
+const { music, autoplay, musicIndex, lyric, Imglist, musicAudio, audioCurrentTime, lyricList, lyricIndex, lyricListHasTime, musicPlugin, playFlag } = storeToRefs(musicStore);
 onMounted(() => {
   // initBackground();
   triggerBackground(false);
@@ -188,6 +196,15 @@ const triggerMusicBox = () => {
       message: '当前音乐插件未启动，请联系后端启动插件',
       type: 'success',
     })
+  }
+}
+//播放暂停音乐
+const playMusic = () => {
+  playFlag.value = !playFlag.value;
+  if (playFlag.value) {
+    (musicAudio.value as any).play();
+  } else {
+    (musicAudio.value as any).pause();
   }
 }
 //打开地图插件
@@ -501,9 +518,32 @@ const moveLeave = (item: any) => {
   // .lyric{
   //   height: 20px;
   // }
-  // audio {
-  //   margin-top: 20px;
-  // }
+  audio {
+    height: 30px;
+
+    // margin-top: 20px;
+    &::-webkit-media-controls-panel,
+    &::-webkit-media-controls-enclosure {
+      background-color: $buttonColor;
+    }
+
+    // &::-webkit-media-controls-current-time-display,
+    // &::-webkit-media-controls-time-remaining-display,
+    // &::-webkit-media-controls-mute-button {
+    //   color: white;
+    //   // background-color: white;
+    // }
+
+    &::-webkit-media-controls-play-button {
+      // background-color: white;
+      display: none;
+      // background-image: url(@/assets/time.svg);
+      // &::-internal-media-controls-button-hover-background {
+      //   opacity: 0.1;
+      // }
+    }
+
+  }
 
   .song,
   .lyric,
@@ -550,14 +590,22 @@ const moveLeave = (item: any) => {
   }
 
   .musicInfo {
-    width: 400px;
+    width: 260px;
+    height: 100%;
   }
 
   .audioBtn {
     width: 200px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .musicController{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 

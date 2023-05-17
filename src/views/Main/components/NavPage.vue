@@ -8,7 +8,7 @@
       <span>快速导航</span>
     </template>
     <template v-for="item in menu" :key="item.path">
-      <MenuItem :item="item">
+      <MenuItem :item="item" :parents="{path:''}" >
       </MenuItem>
     </template>
   </el-menu>

@@ -19,6 +19,7 @@ const menu = [
     meta:{
       important:true,
       isGame:false,
+      isShow:true,
     },
   },
   {
@@ -29,6 +30,7 @@ const menu = [
     meta:{
       important:true,
       isGame:true,
+      isShow:true,
     },
   },
   {
@@ -39,6 +41,7 @@ const menu = [
     meta:{
       important:true,
       isGame:true,
+      isShow:true,
     },
   },
   {
@@ -49,6 +52,7 @@ const menu = [
     meta:{
       important:true,
       isGame:true,
+      isShow:true,
     },
   },
   {
@@ -59,6 +63,7 @@ const menu = [
     meta:{
       important:true,
       isGame:true,
+      isShow:true,
     },
   },
   {
@@ -69,6 +74,7 @@ const menu = [
     meta:{
       important:true,
       isGame:true,
+      isShow:true,
     },
   },
   {
@@ -79,56 +85,88 @@ const menu = [
     meta:{
       important:true,
       isGame:false,
+      isShow:true,
     },
     children: [
       {
-        path: '/music',
+        path: 'music',
         name: 'music',
         title: '音乐',
         icon: Headset,
         meta:{
           important:true,
           isGame:false,
+          isShow:true,
         },
+        children:[
+          {
+            path: 'singerDetail',
+            name: 'singerDetail',
+            title: '歌手详情',
+            icon: Location,
+            meta:{
+              important:true,
+              isGame:false,
+              isShow:false,
+            },
+          },
+        ]
       },
       {
-        path: '/beibao',
+        path: 'beibao',
         name: 'beibao',
         title: '背包',
         icon: Location,
         meta:{
           important:false,
           isGame:false,
+          isShow:true,
         },
+        children:[
+          {
+            path: 'test',
+            name: 'test',
+            title: '测试',
+            icon: Location,
+            meta:{
+              important:true,
+              isGame:false,
+              isShow:true,
+            },
+          },
+        ]
       },
       {
-        path: '/juese',
+        path: 'juese',
         name: 'juese',
         title: '角色',
         icon: ZoomOut,
         meta:{
           important:false,
           isGame:false,
+          isShow:true,
         },
       },
       {
-        path: '/tujian',
+        path: 'tujian',
         name: 'tujian',
         title: '图鉴',
         icon: Document,
         meta:{
           important:false,
           isGame:false,
+          isShow:true,
         },
       },
       {
-        path: '/qianghua',
+        path: 'qianghua',
         name: 'qianghua',
         title: '强化',
         icon: Setting,
         meta:{
           important:false,
           isGame:false,
+          isShow:true,
         },
       },
     ]
@@ -141,26 +179,29 @@ const menu = [
     meta:{
       important:true,
       isGame:false,
+      isShow:true,
     },
     children: [
       {
-        path: '/menu',
+        path: 'menu',
         name: 'menu',
         title: '菜单设置',
         icon: Location,
         meta:{
           important:true,
           isGame:false,
+          isShow:true,
         },
       },
       {
-        path: '/theme',
+        path: 'theme',
         name: 'theme',
         title: '主题设置',
         icon: Location,
         meta:{
           important:true,
           isGame:false,
+          isShow:true,
         },
       },
     ]

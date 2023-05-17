@@ -324,6 +324,12 @@ const initEcharts = async () => {
   option.xAxis.data = weekWeather.map((e: any) => e.date);
   option.series[0].data = weekWeather.map((e: any) => e.temp.split('~')[1].slice(0, -1));
   option.series[1].data = weekWeather.map((e: any) => e.temp.split('~')[0]);
+  option.series[2].data = weekWeather.map((e: any) => [e.date,e.weekName]);
+  option.series[2].markLine.data = [
+    {
+      xAxis:option.series[2].data[1][0]
+    }
+  ];
   myChart.setOption(option);
 }
 const showWeekData = () => {

@@ -18,13 +18,16 @@
             {{ formatComp(row.component) }}
           </template>
           <template #default="{ row }:any" v-else-if="(key as any) == 'meta'">
-            <el-table-column v-for="item, key2 in menuItem.meta" :key="key2" :prop="key2" :label="key2" width="180">
+            <el-table-column v-for="item, key2 in menuItem.meta" :key="key2" :prop="key2" :label="key2" width="90">
               <template #header>
                 <template v-if="(key2 as any) == 'important'">
                   是否为核心组件
                 </template>
                 <template v-else-if="(key2 as any) == 'isGame'">
                   是否是游戏
+                </template>
+                <template v-else-if="(key2 as any) == 'isShow'">
+                  是否展示
                 </template>
                 <template v-else>
                   {{ key2 }}
@@ -36,6 +39,9 @@
                 </template>
                 <template v-else-if="(key2 as any) == 'isGame'">
                   {{ row.meta.isGame?'是':'否' }}
+                </template>
+                <template v-else-if="(key2 as any) == 'isShow'">
+                  {{ row.meta.isShow?'是':'否' }}
                 </template>
                 <template v-else>
                   {{ row.meta[key2] }}

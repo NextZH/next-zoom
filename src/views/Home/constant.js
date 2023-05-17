@@ -76,7 +76,42 @@ export const option = {
           // ]
         ]
       }
-    }
+    },
+    {
+      symbolSize: 20,
+      type: 'line',
+      data:[],
+      markLine: {
+        symbol: ['none', 'none'],//去掉箭头
+        itemStyle: {
+          normal: {
+            lineStyle: {
+              type: 'solid',
+              color: {//设置渐变
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [{
+                  offset: 0, color: 'red '// 0% 处的颜色
+                }, {
+                  offset: 1, color: 'blue' // 100% 处的颜色
+                }],
+                global: false // 缺省为 false
+              }
+            },
+            label: {
+              show: true,
+              position: 'middle'
+            }
+          }
+        },
+        data: [{
+          // xAxis: 1,//这里设置false是隐藏不了的，可以设置为-1
+        },]
+      }
+    },
   ]
 };
 //布局样式

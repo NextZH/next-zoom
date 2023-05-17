@@ -1,15 +1,20 @@
 <template>
   <div id="songPage">
     <template v-if="musicPlugin">
-      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-        <el-tab-pane label="排行" name="range">排行</el-tab-pane>
-        <el-tab-pane label="歌手" name="singer">
-          <Singer />
-        </el-tab-pane>
-        <el-tab-pane label="分类歌单" name="third">分类歌单</el-tab-pane>
-        <el-tab-pane label="精选" name="fourth">精选</el-tab-pane>
-        <el-tab-pane label="数字专辑" name="5">数字专辑</el-tab-pane>
-      </el-tabs>
+      <template v-if="route.path == '/gongneng/music'">
+        <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+          <el-tab-pane label="排行" name="range">排行</el-tab-pane>
+          <el-tab-pane label="歌手" name="singer">
+            <Singer />
+          </el-tab-pane>
+          <el-tab-pane label="分类歌单" name="third">分类歌单</el-tab-pane>
+          <el-tab-pane label="精选" name="fourth">精选</el-tab-pane>
+          <el-tab-pane label="数字专辑" name="5">数字专辑</el-tab-pane>
+        </el-tabs>
+      </template>
+      <template v-else>
+        <router-view></router-view>
+      </template>
     </template>
     <template v-else>
       <BlankPage>
@@ -24,7 +29,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
-import Singer from './components/Singer.vue'
+import Singer from './Singer/index.vue'
+import { useRoute } from 'vue-router'
 import BlankPage from '@/views/BlankPage.vue'
 import { useMusicStore } from '@/stores/Music'
 import { storeToRefs } from "pinia"
@@ -36,11 +42,22 @@ const activeName = ref('singer')
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
+
+const route = useRoute();
+const getMeta = () => {
+  console.log(route);
+}
+
+/* created */
+(() => {
+  // getMeta()
+})();
 </script>
 
 <style scoped lang="scss">
 #songPage {
   height: 100%;
+  width: 100%;
 }
 
 .el-tabs {

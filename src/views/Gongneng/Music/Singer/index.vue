@@ -26,7 +26,7 @@
     <div class="singerList">
       <div class="top">
         <template v-for="item, index in singer.list" :key="item.id">
-          <div class="singerItem" v-if="index < 10">
+          <div class="singerItem" v-if="index < 10" @click="turnDetail(item)">
             <!-- <span>{{ item.name }}</span> -->
             <img :src="item.picUrl" alt="">
             <div class="name">
@@ -37,7 +37,7 @@
       </div>
       <div class="bottom">
         <template v-for="item, index in singer.list" :key="item.id">
-          <div class="singerItem" v-if="index >= 10">
+          <div class="singerItem" v-if="index >= 10" @click="turnDetail(item)">
             <div class="name">
               {{ item.name }}
             </div>
@@ -46,17 +46,21 @@
       </div>
 
     </div>
+    <el-backtop :right="50" :bottom="150" target=".singerList" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { reactive,ref } from 'vue';
 import { singerType, singerArea, singerSort } from '../constant';
+import { useRouter } from 'vue-router'
 import { getArtist } from '@/api/wangyiyun';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
 const themeStore = useThemeStore();
 const { buttonColor } = storeToRefs(themeStore);
+
+const router = useRouter();
 
 const initLoading=ref(false);
 
@@ -82,6 +86,12 @@ const getArtistAsync = async () => {
 const change = () => {
   getArtistAsync();
   // console.log(form.area);
+}
+
+const turnDetail=(item:any)=>{
+  // console.log(item);
+  router.push({ name: 'singerDetail', query: { singerId: item.id }})
+  // location.assign(`/gongneng/music/singerDetail?singerId=${item.id}`)
 }
 
 
