@@ -26,6 +26,11 @@
     background-color: rgba(0, 0, 0, 0.1);
   }
 }
+@mixin noScroll(){
+  &::-webkit-scrollBar{
+    display: none;
+  }
+}
 
 @mixin num($value,$bold){
   #{$value}: $bold;

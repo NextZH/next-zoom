@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 import { getArtistTopSong } from '@/api/wangyiyun';
 import { useMusicStore } from '@/stores/Music';
 import { VideoPlay, VideoPause } from '@element-plus/icons-vue';
@@ -25,26 +25,47 @@ const { musicChange } = musicStore;
 const { music, playFlag, musicAudio, musicIndex } = storeToRefs(musicStore);
 const props = defineProps(['singerId']);
 
+watch(playFlag, (value: any) => {
+  if (value) {
+    song.list.forEach((e: any) => {
+      if (e.id == music.value.currentMusic.id) {
+        e.playFlag = true;
+      }
+    })
+  } else {
+    song.list.forEach((e: any) => {
+      e.playFlag = false;
+    })
+  }
+})
+
 //播放暂停音乐
 const playMusic = async (row: any, index: number) => {
+  const playNewSong = async () => {
+    song.list.forEach((e: any) => {
+      e.playFlag = false
+    });
+    if (music.value.listId != props.singerId) {
+      music.value.listId = props.singerId;
+      music.value.list = song.list.map((e: any) => ({ ...e, artists: e.ar }));
+      music.value.musicImg = song.list.map((e: any) => e.al.picUrl);
+      // musicIndex.value=index;
+    }
+    await musicChange(index);
+    row.playFlag = true;
+  }
   // console.log(row, index);
   if (!row.playFlag) {
-    if (row.id == music.value.currentMusic.id) {
-      row.playFlag = true;
-      playFlag.value = true;
-      (musicAudio.value as any).play();
+    if (playFlag.value) {
+      playNewSong();
     } else {
-      song.list.forEach((e: any) => {
-        e.playFlag = false
-      });
-      if (music.value.listId != props.singerId) {
-        music.value.listId = props.singerId;
-        music.value.list = song.list.map((e: any) => ({ ...e, artists: e.ar }));
-        music.value.musicImg = song.list.map((e: any) => e.al.picUrl);
-        // musicIndex.value=index;
-        await musicChange(index);
-      } 
-      row.playFlag = true;
+      if (row.id == music.value.currentMusic.id) {
+        row.playFlag = true;
+        playFlag.value = true;
+        (musicAudio.value as any).play();
+      } else {
+        playNewSong();
+      }
     }
   } else {
     row.playFlag = false;
@@ -75,9 +96,23 @@ const formatter = (row: any, column: any, cellValue: any, index: number) => {
   return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`
 }
 
+
+const init = async () => {
+  await getArtistTopSongAsync();
+  if (playFlag.value) {
+    if (music.value.listId == props.singerId) {
+      song.list.forEach((e: any) => {
+        if (e.id == music.value.currentMusic.id) {
+          e.playFlag = true;
+        }
+      })
+    }
+  }
+}
+
 /* created */
 (async () => {
-  getArtistTopSongAsync();
+  init();
 })();
 </script>
 

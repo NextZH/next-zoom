@@ -133,8 +133,9 @@
     <div class="row"
       :style="{ '--height': style[2].height, '--left': style[2].left.flex, '--right': style[2].right.flex, '--grow': style[2].center.grow, '--shrink': style[2].center.shrink, }">
       <div class="row-left anime" v-if="style[2].left.show">
-        <el-tabs type="border-card" v-model="week" >
-          <el-tab-pane :label="anime.tagList[i]" v-for="list, i in anime.dataList" :key="i" :name="i!=6?i+1+'':'0'" >
+        <el-tabs type="border-card" v-model="week">
+          <el-tab-pane :label="anime.tagList[i]" v-for="list, i in anime.dataList" :key="i"
+            :name="i != 6 ? i + 1 + '' : '0'">
             <ul>
               <li v-for="item in list">
                 <span><a :href="anime.baseURL + item.nameUrl" target="_blank">{{ item.name }}</a></span>
@@ -146,36 +147,7 @@
       </div>
       <div class="row-center music" v-if="style[2].center.show">
         <template v-if="musicPlugin">
-          <Carousel ref="musicCarousel" :list="Imglist" :height="'200px'" :is-card="true" :indicatorPosition="'none'"
-            :autoplay="false" :initial-index="musicIndex" :arrow="'always'"
-            :style="{ btnBgColor: 'white', btnColor: 'black' }" :change="turnMusic"></Carousel>
-          <el-tooltip class="box-item" effect="dark" :content="music.list && music.list[musicIndex]?.name"
-            placement="top">
-            <div class="song">{{ music.list && music.list[musicIndex]?.name }}</div>
-          </el-tooltip>
-          <el-tooltip class="box-item" effect="dark"
-            :content="music.list && music.list[musicIndex]?.artists.map((e: any) => e.name).join(',')" placement="top">
-            <div class="artists">
-              歌手：
-              <span v-for="item in music.list && music.list[musicIndex]?.artists">{{ item.name }}</span>
-            </div>
-          </el-tooltip>
-          <el-tooltip class="box-item" effect="dark" :content="lyric" placement="top">
-            <div class="lyric">
-              {{ lyric }}
-            </div>
-          </el-tooltip>
-          <div class="controller">
-            <el-button :type="buttonType" size="large" circle @click="playMusic">
-              <el-icon :size="40">
-                <VideoPause v-if="playFlag" />
-                <VideoPlay v-else />
-              </el-icon>
-            </el-button>
-            <el-slider v-model="currentTime" disabled :max="duration" :marks="marks" :format-tooltip="formatTooltip"
-              :step="0.01" @change="sliderChange" />
-          </div>
-          <!-- <audio :src="music.currentMusic.url" controls style="width: 100%;" :autoplay="autoplay" @play="audioPlay" @pause="audioPause" @ended="audioEnded" @seeked="autoSeeked" @loadstart="loadstart" ></audio> -->
+          <MusicPlugin></MusicPlugin>
         </template>
         <template v-else>
           <div class="empty">
@@ -192,68 +164,28 @@
 
 <script setup lang="ts">
 import Carousel from '@/components/Carousel.vue';
-import { ref, reactive, computed, onUnmounted, onMounted, watch } from 'vue';
+import MusicPlugin from './components/MusicPlugin.vue';
+import { ref, reactive, computed, onUnmounted } from 'vue';
 import moment from 'moment';
 import menu from '@/constant/menu';
 import * as echarts from 'echarts';
 import { option, style, list } from './constant';
 import { getWeather, getWeekWeather, getAllAnime } from '@/api/home';
-import { VideoPlay, VideoPause } from '@element-plus/icons-vue';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
 import { useMusicStore } from '@/stores/Music';
 import { useMapStore } from '@/stores/BaiduMap';
+//地图
 const mapStore = useMapStore();
 const { mapFlag } = storeToRefs(mapStore);
 
+//音乐
 const musicStore = useMusicStore();
-const { musicChange } = musicStore;
-const { music, musicIndex, lyric, Imglist, musicAudio, duration, currentTime, playFlag,musicPlugin } = storeToRefs(musicStore);
-//音乐播放切换器实例
-const musicCarousel = ref('musicCarousel');
-//手动切换封面等
-watch(musicIndex, (value) => {
-  // console.log(value);
-  (musicCarousel.value as any).setActiveItem(value);
-})
-//播放暂停音乐
-const playMusic = () => {
-  playFlag.value = !playFlag.value;
-  if (playFlag.value) {
-    (musicAudio.value as any).play();
-  } else {
-    (musicAudio.value as any).pause();
-  }
-}
-//切歌
-const turnMusic = (index: number) => {
-  playFlag.value = true;
-  musicChange(index);
-}
-//进度条首尾长度显示
-const marks = computed(() => ({
-  0: '00:00.00',
-  [duration.value]: formatTooltip(duration.value)
-}));
-//进度条显示格式化
-const formatTooltip = (value: any) => {
-  const time = value.toFixed(0);
-  let m = Math.floor(time / 6000);
-  let s = Math.floor(time / 100) - m * 60;
-  let ms = time % 100;
-  // console.log(value);
-  return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}.${ms < 10 ? '0' + ms : ms}`;
-}
-//进度条改变
-const sliderChange = (value: any) => {
-  console.log('前', value, (musicAudio.value as any).currentTime);
-  // currentTime.value=value;
-  (musicAudio.value as any).currentTime = (value / 100).toFixed(6);
-  console.log('后', value, (musicAudio.value as any).currentTime);
-}
+const {  musicPlugin } = storeToRefs(musicStore);
+
 //主题
 const themeStore = useThemeStore();
-const { buttonType, buttonColor, fontColor } = storeToRefs(themeStore);
+const { buttonColor, fontColor } = storeToRefs(themeStore);
 
 //游戏列表
 const gameList: any = computed(() => menu.filter((e: any) => e.meta.isGame));
@@ -324,10 +256,10 @@ const initEcharts = async () => {
   option.xAxis.data = weekWeather.map((e: any) => e.date);
   option.series[0].data = weekWeather.map((e: any) => e.temp.split('~')[1].slice(0, -1));
   option.series[1].data = weekWeather.map((e: any) => e.temp.split('~')[0]);
-  option.series[2].data = weekWeather.map((e: any) => [e.date,e.weekName]);
+  option.series[2].data = weekWeather.map((e: any) => [e.date, e.weekName]);
   option.series[2].markLine.data = [
     {
-      xAxis:option.series[2].data[1][0]
+      xAxis: option.series[2].data[1][0]
     }
   ];
   myChart.setOption(option);
@@ -356,19 +288,6 @@ const created = () => {
   // getOMMusicAsync();
 }
 created();
-onMounted(() => {
-  // const timer2=setTimeout(()=>{
-  //   // initEcharts();
-  //   // clearTimeout(timer2);
-  // },1000)
-
-  if ((musicAudio.value as any).played) {
-    playFlag.value = (musicAudio.value as any).played;
-  }
-  if ((musicAudio.value as any).paused) {
-    playFlag.value = !(musicAudio.value as any).paused;
-  }
-})
 onUnmounted(() => {
   clearInterval(timer.value);
 })
@@ -379,7 +298,7 @@ onUnmounted(() => {
 
 #homePage {
   $fontColor: var(--fontColor);
-  width: 100%;
+  min-width: 1200px;
   height: auto;
   padding-bottom: 20px;
   display: flex;
@@ -637,42 +556,6 @@ onUnmounted(() => {
       // flex-direction: column;
       color: $fontColor;
       font-size: 14px;
-
-      .song {
-        font-size: 20px;
-      }
-
-      // .lyric{
-      //   height: 20px;
-      // }
-      audio {
-        margin-top: 14px;
-      }
-
-      .controller {
-        margin: 5px 10px;
-        display: flex;
-        align-items: center;
-
-        .el-slider {
-          margin: 0 40px;
-        }
-      }
-
-      .song,
-      .lyric,
-      .artists {
-        margin: 5px 10px;
-        /* 多余文本用...代替 */
-        /* 溢出隐藏 */
-        overflow: hidden;
-        /* 设置伸缩盒子 */
-        display: -webkit-box;
-        /* 设置子元素的对齐方式 */
-        -webkit-box-orient: vertical;
-        /* 设置显示想行数 */
-        -webkit-line-clamp: 1;
-      }
     }
 
     .empty {
