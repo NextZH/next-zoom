@@ -41,6 +41,21 @@
     </div>
     <div class="detailBackground" :style="{ backgroundImage: `url(${music.musicImg[musicIndex]})` }"></div>
   </div>
+  <div class="menuList" :class="{ listFade: !showList }">
+    <el-table :data="music.list" style="width: 100% " stripe>
+      <el-table-column show-overflow-tooltip width="80" label="播放">
+        <template #default="{ row, $index }">
+          <el-icon :size="22" @click="playListMusic(row, $index)">
+            <VideoPause v-if="row.playFlag" />
+            <VideoPlay v-else />
+          </el-icon>
+        </template>
+      </el-table-column>
+      <el-table-column show-overflow-tooltip prop="name" label="歌曲" />
+      <el-table-column show-overflow-tooltip prop="al.name" label="专辑" />
+      <el-table-column show-overflow-tooltip prop="dt" label="时长" width="100" :formatter="formatter" />
+    </el-table>
+  </div>
   <div class="music" :class="{ fade: !showMusic }" :style="{ '--fontColor': fontColor, '--buttonColor': buttonColor, }">
     <div class="musicImg" @mouseenter="triggerHoverBtn(true)" @mouseleave="triggerHoverBtn(false)">
       <div class="hoverBtn" v-if="hoverBtn" @click="triggerDetail()">
@@ -70,18 +85,28 @@
     </div>
     <div class="musicController">
       <div class="audioBtn">
-        <el-tooltip class="box-item" effect="dark" content="上一首" placement="top">
-          <el-button :type="buttonType" :icon="DArrowLeft" circle @click="turnMusic(false)" />
-        </el-tooltip>
-        <el-button :type="buttonType" size="large" circle @click="playMusic">
-          <el-icon :size="40">
-            <VideoPause v-if="playFlag" />
-            <VideoPlay v-else />
-          </el-icon>
-        </el-button>
-        <el-tooltip class="box-item" effect="dark" content="下一首" placement="top">
-          <el-button :type="buttonType" :icon="DArrowRight" circle @click="turnMusic(true)" />
-        </el-tooltip>
+        <div class="playBtns">
+          <el-tooltip class="box-item" effect="dark" content="上一首" placement="top">
+            <el-button :type="buttonType" :icon="DArrowLeft" circle @click="turnMusic(false)" />
+          </el-tooltip>
+          <el-button :type="buttonType" size="large" circle @click="playMusic">
+            <el-icon :size="40">
+              <VideoPause v-if="playFlag" />
+              <VideoPlay v-else />
+            </el-icon>
+          </el-button>
+          <el-tooltip class="box-item" effect="dark" content="下一首" placement="top">
+            <el-button :type="buttonType" :icon="DArrowRight" circle @click="turnMusic(true)" />
+          </el-tooltip>
+        </div>
+        <div class="menuBtn">
+          <el-button :type="buttonType" @click="changeShowList">
+            <el-icon :size="20">
+              <Expand v-if="showList" />
+              <Fold v-else />
+            </el-icon>
+          </el-button>
+        </div>
       </div>
       <audio ref="musicAudio" :src="music.currentMusic.url" controls style="width: 100%;" :autoplay="autoplay"
         @play="audioPlay" @pause="audioPause" @ended="audioEnded" @seeked="autoSeeked" @loadstart="loadstart"
@@ -99,7 +124,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted } from 'vue';
-import { Headset, DArrowRight, DArrowLeft, Top, Bottom, ArrowDownBold, LocationInformation, VideoPause, VideoPlay } from '@element-plus/icons-vue';
+import { Headset, DArrowRight, DArrowLeft, Top, Bottom, ArrowDownBold, Fold, Expand, VideoPause, VideoPlay } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { storeToRefs } from 'pinia';
 import { useThemeStore } from '@/stores/Theme';
@@ -174,10 +199,58 @@ const count = ref(0)
 const load = () => {
   count.value += 2
 }
+/* 播放列表相关 */
+const showList=ref(false);
+const changeShowList=()=>{
+  showList.value=!showList.value;
+}
+
+const formatter = (row: any, column: any, cellValue: any, index: number) => {
+  // console.log(row);
+  const m = Math.floor(row.dt / 60000);
+  const s = Math.floor(row.dt / 1000) % 60;
+  return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`
+}
+//播放暂停音乐
+const playListMusic = async (row: any, index: number) => {
+  const playNewSong = async () => {
+    music.value.list.forEach((e: any) => {
+      e.playFlag = false
+    });
+    await musicChange(index);
+    row.playFlag = true;
+  }
+  // console.log(row, index);
+  if (!row.playFlag) {
+    if (playFlag.value) {
+      playNewSong();
+    } else {
+      if (row.id == music.value.currentMusic.id) {
+        row.playFlag = true;
+        playFlag.value = true;
+        (musicAudio.value as any).play();
+      } else {
+        playNewSong();
+      }
+    }
+  } else {
+    row.playFlag = false;
+    playFlag.value = false;
+    (musicAudio.value as any).pause();
+  }
+
+  // playFlag.value = !playFlag.value;
+  // if (playFlag.value) {
+  //   (musicAudio.value as any).play();
+  // } else {
+  //   (musicAudio.value as any).pause();
+  // }
+}
 </script>
 
 <style scoped lang="scss">
 @import "@/assets/mixins.scss";
+
 .musicDetail {
   $fontColor: var(--fontColor);
   $buttonColor: var(--buttonColor);
@@ -274,6 +347,7 @@ const load = () => {
       color: white;
       text-shadow: 0px 0px 5px black;
       padding-top: 100px;
+
       .infinite-list {
         $height: 500px;
         min-width: 500px;
@@ -357,7 +431,22 @@ const load = () => {
   }
 
 }
-
+.menuList{
+  position: fixed;
+  z-index: 99;
+  bottom: 0;
+  right: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  width: 400px;
+  padding-bottom: 120px;
+  display: flex;
+  overflow: auto;
+  background-color: white;
+  transition: 0.5s;
+  box-shadow: 0px 0px 20px 1px black;
+  @include scrollBar();
+}
 .music {
   $fontColor: var(--fontColor);
   $buttonColor: var(--buttonColor);
@@ -462,11 +551,26 @@ const load = () => {
   }
 
   .audioBtn {
-    width: 200px;
+    width: 100%;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+
+    .playBtns {
+      // width: 200px;
+      // flex: 9 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menuBtn {
+      width: 70px;
+      // flex: 1 0;
+      flex-shrink: 0;
+    }
   }
 
   .musicController {
@@ -480,6 +584,10 @@ const load = () => {
 .fade {
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
   transform: translateY(100px);
+}
+.listFade{
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  transform: translateX(400px);
 }
 
 .detailFade {

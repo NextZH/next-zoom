@@ -91,7 +91,7 @@
           游戏
         </div>
         <div class="content game">
-          <div class="gameItem" v-for="item in gameList" :key="item.path" @click="turnTo(item)">
+          <div class="gameItem" v-for="item in gameList" :key="item.path" @click="turnTo(item,'')">
             <el-icon :size="50">
               <component v-if="item.icon" :is="item.icon.render" />
               <img v-else :src="item.iconPath" alt="" width="50" height="50">
@@ -103,7 +103,7 @@
           功能
         </div>
         <div class="content game">
-          <div class="gameItem" v-for="item in funcList" :key="item.path" @click="turnTo(item)">
+          <div class="gameItem" v-for="item in funcList" :key="item.path" @click="turnTo(item,'/gongneng/')">
             <el-icon :size="50">
               <component v-if="item.icon" :is="item.icon.render" />
               <img v-else :src="item.iconPath" alt="" width="50" height="50">
@@ -115,7 +115,7 @@
           设置
         </div>
         <div class="content game">
-          <div class="gameItem" v-for="item in settingList" :key="item.path" @click="turnTo(item)">
+          <div class="gameItem" v-for="item in settingList" :key="item.path" @click="turnTo(item,'/setting/')">
             <el-icon :size="50">
               <component v-if="item.icon" :is="item.icon.render" />
               <img v-else :src="item.iconPath" alt="" width="50" height="50">
@@ -191,8 +191,8 @@ const { buttonColor, fontColor } = storeToRefs(themeStore);
 const gameList: any = computed(() => menu.filter((e: any) => e.meta.isGame));
 const funcList: any = computed(() => menu.find((e: any) => e.title == '功能')?.children);
 const settingList: any = computed(() => menu.find((e: any) => e.title == '设置')?.children);
-const turnTo = (item: any) => {
-  location.assign(item.path);
+const turnTo = (item: any,topPath:string) => {
+  location.assign(topPath+item.path);
 }
 //定位
 const city = ref('成都');
