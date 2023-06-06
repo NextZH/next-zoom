@@ -9,10 +9,12 @@
 <script setup lang="ts">
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
+const router=useRouter();
 const themeStore = useThemeStore();
 const { buttonType,buttonColor } = storeToRefs(themeStore);
 const turnDown=()=>{
-  history.back();
+  router.back();
 }
 </script>
 

@@ -30,7 +30,7 @@
 import { ref } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 import Singer from './Singer/index.vue'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 import BlankPage from '@/views/BlankPage.vue'
 import { useMusicStore } from '@/stores/Music'
 import { storeToRefs } from "pinia"
@@ -44,13 +44,14 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
 }
 
 const route = useRoute();
+const router = useRouter();
 const getMeta = () => {
-  console.log(route);
+  console.log(route,router);
 }
 
 /* created */
 (() => {
-  // getMeta()
+  getMeta()
 })();
 </script>
 

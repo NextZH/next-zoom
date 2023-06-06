@@ -175,6 +175,8 @@ import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
 import { useMusicStore } from '@/stores/Music';
 import { useMapStore } from '@/stores/BaiduMap';
+import { useRouter } from 'vue-router';
+const router=useRouter();
 //地图
 const mapStore = useMapStore();
 const { mapFlag } = storeToRefs(mapStore);
@@ -192,7 +194,7 @@ const gameList: any = computed(() => menu.filter((e: any) => e.meta.isGame));
 const funcList: any = computed(() => menu.find((e: any) => e.title == '功能')?.children);
 const settingList: any = computed(() => menu.find((e: any) => e.title == '设置')?.children);
 const turnTo = (item: any,topPath:string) => {
-  location.assign(topPath+item.path);
+  router.push(topPath+item.path);
 }
 //定位
 const city = ref('成都');

@@ -22,6 +22,8 @@ import { ref, reactive, watch, computed } from 'vue';
 import { usePageStore } from '@/stores/Page';
 import { useThemeStore } from '@/stores/Theme';
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
+const router=useRouter();
 const themeStore = useThemeStore();
 const { buttonType } = storeToRefs(themeStore);
 const pageStore = usePageStore();
@@ -50,11 +52,11 @@ const turnDown = (flag: boolean) => {
   if (flag) {
     searchPath(menu, '/home');
     localStorage.setItem('defaultPath', '/home');
-    location.assign('/home');
+    router.push('/home');
   } else {
     searchPath(menu, history.state.back);
     localStorage.setItem('defaultPath', history.state.back);
-    history.back();
+    router.back();
   }
 }
 </script>

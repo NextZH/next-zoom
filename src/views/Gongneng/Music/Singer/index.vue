@@ -91,7 +91,6 @@ const change = () => {
 const turnDetail=(item:any)=>{
   // console.log(item);
   router.push({ name: 'singerDetail', query: { singerId: item.id }})
-  // location.assign(`/gongneng/music/singerDetail?singerId=${item.id}`)
 }
 
 
