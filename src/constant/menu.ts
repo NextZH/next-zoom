@@ -1,10 +1,29 @@
+/**
+ * 菜单配置规则
+ * 
+ * 1.只有一级的菜单的path前面要加斜杠
+ * 2.只有两级的菜单的path，一级前面加斜杠，二级不加
+ * 3.有三级以上菜单时，在最里面这层菜单之外的所有父菜单都写上完整path(避免多次点击菜单，重复添加中间path)
+ * 
+ * exp:   
+ *      只有一级：
+ *          一级：主页 /home
+ *      只有两级：
+ *          一级：功能 /gongneng
+ *          二级：音乐 music
+ *      三级以上：
+ *        一级：功能 /gongneng
+ *        二级：背包 /gongneng/beibao
+ *        三级：测试 test
+ * 
+ */
+
 import {
   Document,
   Menu as IconMenu,
   Location,
   Setting,
   ZoomOut,
-  SwitchFilled,
   Headset,
 } from '@element-plus/icons-vue'
 
@@ -113,7 +132,7 @@ const menu = [
         ]
       },
       {
-        path: 'beibao',
+        path: '/gongneng/beibao',//有三级以上菜单时，尽量在最里面这层菜单之外的所有父菜单都写上完整path
         name: 'beibao',
         title: '背包',
         icon: Location,

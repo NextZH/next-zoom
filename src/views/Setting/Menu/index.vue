@@ -5,7 +5,7 @@
       <el-button :type="buttonType" @click="findMenu">查找</el-button>
       <el-button :type="buttonType" @click="addMenu">新增</el-button>
     </el-form-item>
-    <el-table :data="showMenu" stripe style="width: 100%;height: 60vh;" row-key="path">
+    <el-table :data="showMenu" stripe border style="width: 100%;height: 60vh;" row-key="path">
       <template v-for="item, key in   menuItem  " :key="key">
         <el-table-column :prop="key" :label="key" v-if="(key as any) != 'iconPath'">
           <template #default="{ row }: any" v-if="(key as any) == 'icon'">

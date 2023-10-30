@@ -8,11 +8,11 @@
       </el-icon>
       <span>{{ item.title }}</span>
     </template>
-    <MenuItem :item="child" v-for="child in item.children" :parents="item" >
+    <MenuItem :item="child" v-for="child in item.children" :parents="item" :key="child" >
     </MenuItem>
   </el-sub-menu>
   <template v-else>
-    <el-menu-item :index="parents.path?parents.path+'/'+item.path:item.path" v-if="item.meta.isShow" @click="clickItem(item)">
+    <el-menu-item :index="getIndex(parents,item)" v-if="item.meta.isShow" @click="clickItem(item)">
       <el-icon size="20px">
         <component :is="item.icon" v-if="item.icon" />
         <img v-else :src="item.iconPath" alt="" width="20" height="20">
@@ -24,12 +24,20 @@
 
 <script setup lang="ts">
 import { usePageStore } from './../stores/Page';
+import { computed } from 'vue';
 // import { storeToRefs } from 'pinia';
 const pageStore = usePageStore();
 // const { pageName }=storeToRefs(pageStore);
 const { setPageName, setPageObj } = pageStore;
 const name = 'MenuItem';
 const props = defineProps(['item','parents']);
+
+const getIndex=(parents:any,item:any)=>{
+  // console.log('getIndex',parents,item);
+  // console.log('getIndex',parents.path?parents.path+'/'+item.path:item.path);
+  return parents.path?parents.path+'/'+item.path:item.path;
+}
+
 const clickItem = (item: any) => {
   // if (item.component.toString().includes("BlankPage.vue")) {
   //   setPageName(item.title);

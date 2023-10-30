@@ -36,7 +36,7 @@ const created = () => {
 }
 created();
 const handleSelect = (key: string, keyPath: string[]) => {
-  // console.log(key, keyPath)
+  console.log(key, keyPath)
   // defaultPath.value=key;
   localStorage.setItem('defaultPath', key);
 }

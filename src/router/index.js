@@ -10,6 +10,7 @@ const routerComponent = {
   Xiangqi: () => import('../views/Xiangqi/index.vue'),
   Yanglegeyang: () => import('../views/Yanglegeyang/index.vue'),
   Music:()=>import('../views/Gongneng/Music/index.vue'),
+  Test:()=>import('../views/Gongneng/Test/index.vue'),
   SingerDetail:()=>import('../views/Gongneng/Music/SingerDetail/index.vue'),
   Menu: () => import('../views/Setting/Menu/index.vue'),
   Theme: () => import('../views/Setting/Theme/index.vue'),
