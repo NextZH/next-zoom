@@ -5,7 +5,7 @@ import NotFound from '../views/NotFound.vue';
 const routerComponent = {
   Home: () => import('../views/Home/index.vue'),
   Saolei: () => import('../views/Saolei/index.vue'),
-  Shudu: () => import('../views/Shudu.vue'),
+  Craft: () => import('../views/Craft.vue'),
   Wuziqi: () => import('../views/Wuziqi/index.vue'),
   Xiangqi: () => import('../views/Xiangqi/index.vue'),
   Yanglegeyang: () => import('../views/Yanglegeyang/index.vue'),

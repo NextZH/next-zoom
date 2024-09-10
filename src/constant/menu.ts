@@ -53,9 +53,9 @@ const menu = [
     },
   },
   {
-    path: '/shudu',
-    name: 'shudu',
-    title: '数独',
+    path: '/craft',
+    name: 'craft',
+    title: '1024',
     iconPath: 'shudu.svg',
     meta:{
       important:true,
