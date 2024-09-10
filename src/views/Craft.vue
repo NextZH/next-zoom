@@ -6,8 +6,9 @@
         <div class="cell" v-for="item in 16" :key="item"></div>
       </div>
       <div class="chess chessPieces">
-        <div :class="{ cell: true, ...getColor(item),new:item.new,hasChess:item.value > 0 }" v-for="item in chesses" :key="item.id">{{
-          item.value > 0 ? item.value : '' }}</div>
+        <div :class="{ cell: true, ...getColor(item), new: item.new, hasChess: item.value > 0 }" v-for="item in chesses"
+          :key="item.id">{{
+            item.value > 0 ? item.value : '' }}</div>
       </div>
     </div>
     <div class="btns">
@@ -28,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import _ from 'lodash'
 import { ElMessage } from 'element-plus';
 
@@ -75,7 +76,7 @@ const init = () => {
     chesses.value.push({
       value: 0,
       id: i,
-      new:false
+      new: false
     })
   }
   gameStatus.value = false;
@@ -173,7 +174,7 @@ const moveChess = (flag: string) => {
   }
   const newChesses = _.cloneDeep(chesses.value);//所有都算完之后的棋子布局
   const handle: any = (e: any, i: number, index: number) => {
-    const {condition,self,next}=params;
+    const { condition, self, next } = params;
     if (condition(i)) {
       if (newChesses[next(i)].value == 0) {
         //1.移动方没有方块
@@ -216,6 +217,32 @@ const moveChess = (flag: string) => {
 (() => {
   init();
 })()
+onMounted(() => {
+  document.addEventListener('keydown', (e: any) => {
+    switch (e.key) {
+      case 'ArrowDown':
+        chessDown();
+        break;
+      case 'ArrowUp':
+        chessUp();
+        break;
+      case 'ArrowLeft':
+        chessLeft();
+        break;
+      case 'ArrowRight':
+        chessRight();
+        break;
+      case 'Enter':
+        startGame();
+        break;
+      default:
+        break;
+    }
+  })
+})
+onUnmounted(()=>{
+  document.removeEventListener('keydown', ()=>{});
+})
 </script>
 
 <style lang="scss" scoped>
@@ -271,19 +298,21 @@ const moveChess = (flag: string) => {
 
       .cell {
         transition: 0.5s;
-        transform: scale(0,0);
+        transform: scale(0, 0);
 
         &.up-chess {
           transform: translateY(-100px);
         }
       }
-      .hasChess{
-        transform: scale(1,1);
+
+      .hasChess {
+        transform: scale(1, 1);
       }
-      .new{
+
+      .new {
         transition: 1s;
         transform-origin: 50% 50%;
-        transform: scale(1,1);
+        transform: scale(1, 1);
       }
 
       .chess_2 {
@@ -329,8 +358,9 @@ const moveChess = (flag: string) => {
       .chess_2048 {
         background-color: #ffffff;
         animation: identifier 1s linear forwards infinite;
+
         @keyframes identifier {
-          50%{
+          50% {
             background-color: #000000;
           }
         }
@@ -339,32 +369,41 @@ const moveChess = (flag: string) => {
       .chess_4096 {
         background-color: #ff2a2a;
         animation: identifier2 2s linear forwards infinite;
+
         @keyframes identifier2 {
-          10%{
+          10% {
             background-color: rgb(245, 101, 29);
           }
-          20%{
+
+          20% {
             background-color: rgb(245, 195, 29);
           }
-          30%{
+
+          30% {
             background-color: rgb(180, 245, 29);
           }
-          40%{
+
+          40% {
             background-color: rgb(65, 245, 29);
           }
-          50%{
+
+          50% {
             background-color: rgb(29, 245, 231);
           }
-          60%{
+
+          60% {
             background-color: rgb(29, 90, 245);
           }
-          70%{
+
+          70% {
             background-color: rgb(155, 29, 245);
           }
-          80%{
+
+          80% {
             background-color: rgb(245, 29, 191);
           }
-          90%{
+
+          90% {
             background-color: rgb(245, 29, 65);
           }
         }
